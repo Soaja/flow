@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FLOW — Sport. Redefined.</title>
+    <meta name="description" content="FLOW is a Belgrade-based sports groupation combining agency, media and athlete management across the Balkans and Adriatic." />
+
+    <link rel="icon" type="image/svg+xml" href="/flow-symbol.svg" />
+
+    <!-- Preconnect for Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Fonts: non-render-blocking via media trick -->
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+      media="print" onload="this.media='all'" />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" />
+    </noscript>
+
+    <!-- Preload LCP image (WebP) -->
+    <link rel="preload" as="image" href="/hero-athlete.webp"
+      imagesrcset="/hero-athlete-sm.webp 768w, /hero-athlete.webp 1920w"
+      imagesizes="100vw"
+      fetchpriority="high" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
