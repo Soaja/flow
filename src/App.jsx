@@ -7,7 +7,6 @@ import SocialRail from './components/SocialRail';
 /* Lazy-load everything below the fold — parsed only after first paint */
 const Manifesto  = lazy(() => import('./components/Manifesto'));
 const MediaHub   = lazy(() => import('./components/MediaHub'));
-const Athletes   = lazy(() => import('./components/Athletes'));
 const Contact    = lazy(() => import('./components/Contact'));
 
 export default function App() {
@@ -82,7 +81,6 @@ export default function App() {
         <Suspense fallback={null}>
           <Manifesto />
           <MediaHub />
-          <Athletes />
           <Contact />
         </Suspense>
       </main>

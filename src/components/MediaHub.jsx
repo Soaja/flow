@@ -22,15 +22,11 @@ const cards = [
   },
 ];
 
-const platforms = ['TikTok', 'Instagram', 'YouTube', 'Podcast'];
-
 export default function MediaHub() {
   const sectionRef = useRef(null);
 
   useGsapIdle(() => {
     const ctx = gsap.context(() => {
-      gsap.from('.media-header', { y: 36, opacity: 0, duration: .7, ease: 'power3.out', scrollTrigger: { trigger: sectionRef.current, start: 'top 80%' } });
-
       // clip-path reveal on each card
       document.querySelectorAll('.media-img-wrap').forEach((el, i) => {
         gsap.fromTo(el,
@@ -45,30 +41,15 @@ export default function MediaHub() {
       });
 
       gsap.from('.media-card-text', { y: 24, opacity: 0, stagger: .14, duration: .7, ease: 'power3.out', scrollTrigger: { trigger: '.media-cards-grid', start: 'top 76%' } });
-      gsap.from('.platform-row', { y: 20, opacity: 0, duration: .6, ease: 'power3.out', scrollTrigger: { trigger: '.platform-row', start: 'top 88%' } });
     }, sectionRef);
     return () => ctx.revert();
   });
 
   return (
-    <section id="media" ref={sectionRef} className="work-showcase" style={{ padding: '120px 0', borderBottom: '1px solid var(--border)' }}>
+    <section id="media" ref={sectionRef} className="work-showcase" style={{ padding: 0, borderBottom: '1px solid var(--border)' }}>
       <div className="work-bg-image" aria-hidden="true" />
       <div className="work-bg-grid" aria-hidden="true" />
-      <div className="work-bg-word" aria-hidden="true">WORK</div>
-      <div className="work-bg-orbit" aria-hidden="true"><span /></div>
       <div className="container work-content">
-        <div className="media-header" style={{
-          display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
-          marginBottom: 60, flexWrap: 'wrap', gap: 24,
-        }}>
-          <div>
-            <h2 style={{ fontFamily: 'var(--f-display)', fontSize: 'clamp(2rem,4vw,3.5rem)', fontWeight: 700, letterSpacing: '-.03em', lineHeight: 1, textTransform: 'uppercase' }}>
-              Our Work
-            </h2>
-          </div>
-          <a href="#" className="btn-ghost-sm">All content ↗</a>
-        </div>
-
         <div className="media-cards-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 2 }}>
           {cards.map((c, i) => (
             <article key={i} className="media-card-wrap" style={{ position: 'relative', cursor: 'pointer', overflow: 'hidden' }}>
@@ -101,33 +82,20 @@ export default function MediaHub() {
           ))}
         </div>
 
-        <div className="platform-row" style={{ display: 'flex', alignItems: 'center', gap: 32, marginTop: 40, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '.72rem', fontWeight: 600, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--fg-muted)' }}>Find us on</span>
-          {platforms.map(p => (
-            <a key={p} href="#" className="platform-link" style={{
-              fontFamily: 'var(--f-display)', fontSize: '.9rem', fontWeight: 700,
-              color: 'var(--fg-muted)', transition: 'color .2s',
-            }}>
-              {p}
-            </a>
-          ))}
-        </div>
       </div>
+      <h2 className="work-brutal"><span>Our</span><span>Work</span></h2>
       <style>{`
         .work-showcase { position:relative; overflow:hidden; isolation:isolate; background:#1f211f; }
         .work-content { position:relative; z-index:2; }
+        .media-cards-grid{height:70vh;min-height:540px;max-height:760px}
+        .media-card-wrap,.media-img-wrap{height:100%}.media-img-wrap{aspect-ratio:auto!important}
+        .work-brutal{position:absolute;z-index:2;right:22px;bottom:12px;width:auto;margin:0;padding:0;display:flex;justify-content:flex-start;align-items:flex-end;gap:.18em;font-family:var(--f-display);font-size:clamp(8rem,14.5vw,15rem);font-weight:700;line-height:.7;letter-spacing:-.082em;text-transform:uppercase;color:var(--fg);white-space:nowrap}
         .work-showcase::before { content:''; position:absolute; z-index:-1; inset:0; background:linear-gradient(90deg,rgba(31,33,31,.96) 0%,rgba(31,33,31,.78) 48%,rgba(31,33,31,.94) 100%),radial-gradient(circle at 76% 30%,rgba(202,219,46,.12),transparent 28%); }
         .work-bg-image { position:absolute; z-index:-3; inset:-8%; background:url('/flow-visual.webp') center/cover no-repeat; filter:grayscale(1) contrast(1.15); opacity:.32; transform:scale(1.05); }
         .work-bg-grid { position:absolute; z-index:-1; inset:0; background-image:linear-gradient(rgba(231,233,234,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(231,233,234,.025) 1px,transparent 1px); background-size:68px 68px; mask-image:linear-gradient(to bottom,#000,transparent 88%); }
-        .work-bg-word { position:absolute; z-index:0; right:-2vw; top:-2vh; font-family:var(--f-display); font-size:clamp(11rem,28vw,31rem); font-weight:700; line-height:.8; letter-spacing:-.09em; color:transparent; -webkit-text-stroke:1px rgba(202,219,46,.08); pointer-events:none; }
-        .work-bg-orbit { position:absolute; z-index:0; right:8%; top:14%; width:min(34vw,520px); aspect-ratio:1; border:1px solid rgba(202,219,46,.12); border-radius:50%; animation:workOrbit 12s linear infinite; }
-        .work-bg-orbit::before,.work-bg-orbit::after { content:''; position:absolute; border:1px solid rgba(202,219,46,.055); border-radius:50%; }.work-bg-orbit::before{inset:12%}.work-bg-orbit::after{inset:27%}
-        .work-bg-orbit span { position:absolute; left:50%; top:-5px; width:10px; height:10px; border-radius:50%; background:var(--accent); box-shadow:0 0 30px 8px rgba(202,219,46,.28); }
         .media-card-wrap { border:1px solid rgba(231,233,234,.1); background:#161816; box-shadow:0 22px 55px rgba(0,0,0,.24); }
-        @keyframes workOrbit { to { transform:rotate(360deg); } }
-        @media(max-width:900px){.media-cards-grid{grid-template-columns:1fr !important}}
-        @media(max-width:900px){.work-showcase{height:auto!important;min-height:100dvh}.work-bg-word{top:6%;right:-12%;font-size:55vw}.work-bg-orbit{width:80vw;right:-35%;top:10%}.work-bg-image{opacity:.2}}
-        .platform-link:hover { color: var(--accent) !important; }
+        @media(max-width:900px){.media-cards-grid{grid-template-columns:1fr !important;height:auto;max-height:none}.media-card-wrap,.media-img-wrap{height:64vh;min-height:440px}.work-brutal{position:relative;right:auto;bottom:auto;display:block;margin:30px 0 24px;padding:0 20px;font-size:21vw;white-space:normal}.work-brutal span{display:block}}
+        @media(max-width:900px){.work-showcase{height:auto!important;min-height:100dvh;padding-top:88px!important}.work-bg-image{opacity:.2}}
       `}</style>
     </section>
   );

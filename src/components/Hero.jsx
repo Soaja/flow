@@ -18,7 +18,7 @@ export default function Hero() {
           scrollTrigger: { trigger: sectionRef.current, start: 'top top', end: 'bottom top', scrub: true },
         });
         gsap.to(symbolRef.current, {
-          yPercent: 38, opacity: 0, ease: 'none',
+          yPercent: 12, opacity: 0, ease: 'none',
           scrollTrigger: { trigger: sectionRef.current, start: 'top top', end: '60% top', scrub: true },
         });
       }, sectionRef);
@@ -73,7 +73,6 @@ export default function Hero() {
 
       {/* The supplied FLOW symbol becomes the page's living heartbeat. */}
       <div ref={symbolRef} className="hero-pulse" aria-hidden="true">
-        <span className="hero-pulse-ring" />
         <img src="/flow-symbol.svg" alt="" width="520" height="520" decoding="async" />
       </div>
 
@@ -145,13 +144,14 @@ export default function Hero() {
         @keyframes hFade  { from { opacity: 0; } to { opacity: 1; } }
         @keyframes hUp    { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:none; } }
         @keyframes hWord  { from { opacity:0; transform:translateY(60px); } to { opacity:1; transform:none; } }
-        .hero-pulse { position:absolute; right:4%; top:48%; width:min(42vw,560px); aspect-ratio:1.52; display:grid; place-items:center; pointer-events:none; filter:drop-shadow(0 0 30px rgba(202,219,46,.3)); }
-        .hero-pulse img { width:100%; position:relative; z-index:1; animation:flowBeat 2.2s cubic-bezier(.22,.61,.36,1) infinite; }
-        .hero-pulse-ring { position:absolute; width:82%; aspect-ratio:1; border:1px solid rgba(202,219,46,.38); border-radius:50%; animation:flowRing 2.2s ease-out infinite; }
-        @keyframes flowBeat { 0%,100%{transform:scale(1);opacity:.38} 8%{transform:scale(1.055);opacity:.92} 16%{transform:scale(1);opacity:.48} 24%{transform:scale(1.035);opacity:.8} 34%{transform:scale(1);opacity:.38} }
-        @keyframes flowRing { 0%{transform:scale(.62);opacity:.8} 42%,100%{transform:scale(1.22);opacity:0} }
+        .hero-pulse { position:absolute; z-index:0; inset:-12% -20% -12% -18%; display:flex; align-items:center; justify-content:center; pointer-events:none; opacity:.2; overflow:hidden; mix-blend-mode:screen; filter:drop-shadow(0 0 52px rgba(202,219,46,.15)); }
+        .hero-pulse::before { content:''; position:absolute; z-index:2; top:9%; bottom:9%; left:0; width:1px; opacity:0; background:linear-gradient(180deg,transparent,rgba(202,219,46,.22) 12%,var(--accent) 50%,rgba(202,219,46,.22) 88%,transparent); box-shadow:0 0 18px rgba(202,219,46,.48); animation:ekgScan 3.2s cubic-bezier(.4,0,.18,1) infinite; }
+        .hero-pulse::after { content:''; position:absolute; inset:8%; background:radial-gradient(ellipse at center,rgba(202,219,46,.1),transparent 68%); filter:blur(56px); opacity:.6; }
+        .hero-pulse img { position:relative; z-index:1; width:150%; max-width:none; height:122%; object-fit:contain; filter:brightness(0) saturate(100%) invert(87%) sepia(54%) saturate(1028%) hue-rotate(16deg) brightness(91%) contrast(88%) blur(.15px); clip-path:inset(0 100% 0 0); animation:ekgReveal 3.2s cubic-bezier(.4,0,.18,1) infinite; }
+        @keyframes ekgReveal { 0%,4%{clip-path:inset(0 100% 0 0);opacity:0} 7%{opacity:.88} 46%{clip-path:inset(0);opacity:.88} 58%{clip-path:inset(0);opacity:.76} 78%,100%{clip-path:inset(0);opacity:0} }
+        @keyframes ekgScan { 0%,4%{left:0;opacity:0} 7%{left:0;opacity:1} 46%{left:100%;opacity:1} 51%,100%{left:100%;opacity:0} }
 
-        @media (max-width: 768px) { #hero { padding-bottom: 96px; } .hero-pulse{right:-25%;top:24%;width:86vw;opacity:.38} }
+        @media (max-width: 768px) { #hero { padding-bottom: 96px; } .hero-pulse{inset:-8% -45% -8% -42%;opacity:.14}.hero-pulse img{width:155%;height:112%} }
       `}</style>
     </section>
   );

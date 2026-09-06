@@ -11,6 +11,7 @@ export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [active, setActive] = useState('hero');
   const animationRef = useRef(null);
+  const activeIndex = Math.max(0, links.findIndex((link) => link.href === `#${active}`));
 
   useEffect(() => {
     let observer;
@@ -67,24 +68,21 @@ export default function Nav() {
   return (
     <>
       <header className="vertical-header">
+        <span
+          className="section-progress"
+          style={{ '--progress-height': `calc(34vh + ${(activeIndex + 1) * 64}px)` }}
+          aria-hidden="true"
+        />
         <a href="#hero" className="vertical-logo" aria-label="FLOW home" onClick={(event) => navigateTo(event, '#hero')}>
           <img src="/flow-logo.svg" alt="" />
         </a>
         <nav className="vertical-nav" aria-label="Primary navigation">
-          {links.map((link, index) => (
-            <a key={link.href} href={link.href} onClick={(event) => navigateTo(event, link.href)} className={`vertical-link${active === link.href.slice(1) ? ' active' : ''}`}>
-              <span className="vertical-index">0{index + 1}</span>
+          {links.map((link) => (
+            <a key={link.href} href={link.href} onClick={(event) => navigateTo(event, link.href)} aria-current={active === link.href.slice(1) ? 'page' : undefined} className={`vertical-link${active === link.href.slice(1) ? ' active' : ''}`}>
               <span>{link.label}</span>
             </a>
           ))}
         </nav>
-        <a className="vertical-contact" href="mailto:hello@flowsport.co" aria-label="Email FLOW">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 6.75h16v10.5H4z" />
-            <path d="m4.5 7.25 7.5 5.5 7.5-5.5" />
-          </svg>
-          <span>Talk</span>
-        </a>
       </header>
 
       <header className="mobile-header">
