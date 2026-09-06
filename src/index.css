@@ -53,7 +53,7 @@ main > section {
 .vertical-logo { position:relative; flex:0 0 128px; width:100%; display:flex; align-items:center; justify-content:flex-start; padding:0 22px; background:transparent; transition:opacity .28s var(--ease); }
 .vertical-logo::after { content:none; }
 .vertical-logo:hover { opacity:.78; }
-.vertical-logo img { width:82px; height:auto; object-fit:contain; filter:brightness(0) saturate(100%) invert(87%) sepia(54%) saturate(1028%) hue-rotate(16deg) brightness(91%) contrast(88%); }
+.vertical-logo img { width:82px; height:auto; object-fit:contain; }
 .vertical-nav { position:absolute; top:34%; left:0; width:100%; display:flex; flex-direction:column; align-items:stretch; }
 .vertical-link { position:relative; width:100%; min-height:64px; display:flex; align-items:center; padding:0 24px; font-family:var(--f-display); font-size:.72rem; font-weight:700; line-height:1; letter-spacing:.01em; text-align:left; text-transform:uppercase; color:rgba(231,233,234,.58); background:transparent; transition:color .28s var(--ease),background .32s var(--ease),padding .32s var(--ease); }
 .vertical-link::before { content:none; }
