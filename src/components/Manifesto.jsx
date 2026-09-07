@@ -9,6 +9,20 @@ const services = [
   'Brand Partnerships', 'Digital Strategy', 'Commercial Activations', 'Community & Events',
 ];
 
+function ServiceIcon({ index }) {
+  const common = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round', strokeLinejoin: 'round' };
+  const paths = [
+    <><path d="M12 2.5 13.8 8l5.7 1.8-5.7 1.8L12 17l-1.8-5.4-5.7-1.8L10.2 8 12 2.5Z"/><path d="M19 3v3M17.5 4.5h3"/></>,
+    <><path d="M4 5.5h10.5v9H4z"/><path d="m14.5 8 5-2.5v9l-5-2.5M7 3v2.5"/></>,
+    <><circle cx="8" cy="7" r="3"/><path d="M2.5 18c.7-3.3 2.5-5 5.5-5 1.8 0 3.2.6 4.1 1.8M15 5.5h6v8h-3l-2.5 2v-2H14v-8Z"/></>,
+    <><path d="M9.5 14.5 7 17a3.5 3.5 0 0 1-5-5l3-3a3.5 3.5 0 0 1 5-.1"/><path d="m14.5 9.5 2.5-2.5a3.5 3.5 0 0 1 5 5l-3 3a3.5 3.5 0 0 1-5 .1M8 12h8"/></>,
+    <><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z"/></>,
+    <><path d="M13 2 4 13h7l-1 9 9-12h-7l1-8Z"/></>,
+    <><path d="M4 6h16v14H4zM8 3v5M16 3v5M4 10h16"/><path d="m8 15 2 2 5-5"/></>,
+  ];
+  return <svg viewBox="0 0 24 24" aria-hidden="true" {...common}>{paths[index]}</svg>;
+}
+
 const moments = [
   ['/athlete-run.webp', 'Run', '/jordan-the-one.mp4', '01'],
   ['/artboard-2.png', 'Detail', null, '02'],
@@ -57,8 +71,13 @@ export default function Manifesto() {
           <p className="about-description">Founded on agency experience and young energy — the team behind Jordan Brand&rsquo;s global campaigns and Nike in the region. FLOW brings together marketing, media and athlete communications under one brand.</p>
           <h3>We move sport forward through:</h3>
           <div className="service-cloud">
-            {services.map((service, index) => (
-              <span className="service-chip" key={service}><i>{String(index + 1).padStart(2, '0')}</i>{service}</span>
+            {[services.slice(0, 2), services.slice(2, 4), services.slice(4)].map((row, rowIndex) => (
+              <div className="service-row" key={rowIndex}>
+                {row.map((service) => {
+                  const index = services.indexOf(service);
+                  return <span className="service-chip" key={service}><i><ServiceIcon index={index} /></i>{service}</span>;
+                })}
+              </div>
             ))}
           </div>
         </div>
@@ -131,10 +150,11 @@ export default function Manifesto() {
         .about-main-copy h2 strong,.about-main-copy h2 span{display:block}.about-main-copy h2 strong{color:var(--accent);font-weight:700}.about-main-copy h2 span{margin-top:8px;color:var(--fg)}
         .about-intro{margin-top:24px;font-family:var(--f-display);font-size:clamp(.96rem,1.15vw,1.18rem);font-weight:700;text-transform:uppercase;letter-spacing:.035em;color:var(--fg)}
         .about-description{max-width:680px;margin-top:12px;font-size:clamp(.8rem,.88vw,.92rem);line-height:1.68;color:rgba(231,233,234,.64)}
-        .about-main-copy h3{margin-top:26px;font-family:var(--f-display);font-size:.76rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(231,233,234,.86)}
-        .service-cloud{display:flex;flex-wrap:wrap;gap:9px;margin-top:15px;max-width:980px}
-        .service-chip{display:flex;align-items:center;gap:10px;min-height:40px;padding:8px 15px;border:1px solid rgba(231,233,234,.15);border-radius:999px;background:rgba(12,14,12,.18);backdrop-filter:blur(10px);font-size:clamp(.67rem,.76vw,.78rem);font-weight:600;color:rgba(231,233,234,.88);transition:background .25s,border-color .25s,color .25s,transform .25s}
-        .service-chip i{font-style:normal;font-size:.52rem;letter-spacing:.05em;color:var(--accent)}
+        .about-main-copy h3{margin-top:28px;font-family:var(--f-display);font-size:clamp(.92rem,1.15vw,1.18rem);font-weight:700;letter-spacing:.055em;text-transform:uppercase;color:var(--fg)}
+        .service-cloud{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-top:18px;max-width:1040px}
+        .service-row{display:flex;flex-wrap:wrap;gap:10px}
+        .service-chip{display:flex;align-items:center;gap:13px;min-height:52px;padding:10px 20px;border:1px solid rgba(231,233,234,.2);border-radius:999px;background:rgba(12,14,12,.3);backdrop-filter:blur(10px);font-size:clamp(.78rem,.92vw,.98rem);font-weight:600;color:rgba(231,233,234,.94);transition:background .25s,border-color .25s,color .25s,transform .25s}
+        .service-chip i{width:27px;height:27px;display:grid;place-items:center;flex:0 0 27px;font-style:normal;color:var(--accent)}.service-chip i svg{width:100%;height:100%}
         .service-chip:hover{background:var(--accent);border-color:var(--accent);color:var(--bg);transform:translateY(-2px)}.service-chip:hover i{color:var(--bg)}
         .flow-poster{position:relative;width:100%;aspect-ratio:.76;max-height:610px;overflow:hidden;background:var(--accent);color:var(--bg);box-shadow:0 30px 80px rgba(0,0,0,.45);isolation:isolate}
         .poster-grain{position:absolute;inset:0;z-index:-1;background:url('/texture.webp') center/cover;mix-blend-mode:multiply;opacity:.18}
@@ -148,7 +168,7 @@ export default function Manifesto() {
         .moments-list{display:grid;grid-template-columns:repeat(6,1fr);min-width:0;overflow:visible}.moments-list figure{position:relative;overflow:visible;border-right:1px solid rgba(231,233,234,.1);background:#151715;outline:none}.moments-list figure>img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) brightness(.62);transition:filter .35s}.moments-list figure::after{content:'▶';position:absolute;z-index:2;right:12px;top:12px;width:28px;height:28px;display:grid;place-items:center;border:1px solid rgba(231,233,234,.45);border-radius:50%;font-size:.48rem;color:var(--fg);opacity:.72;transition:background .25s,color .25s,border-color .25s}.moments-list figure:hover>img,.moments-list figure:focus-visible>img{filter:grayscale(0) brightness(.72)}.moments-list figure:hover::after,.moments-list figure:focus-visible::after{background:var(--accent);border-color:var(--accent);color:var(--bg)}.moments-list figcaption{position:absolute;z-index:2;left:12px;bottom:11px;font-size:.5rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fg)}
         .moment-portrait-preview{position:absolute;z-index:8;left:0;bottom:0;width:100%;aspect-ratio:9/16;overflow:hidden;background:#0b0c0b;border:1px solid rgba(202,219,46,.7);box-shadow:0 -28px 80px rgba(0,0,0,.62),0 0 34px rgba(202,219,46,.1);opacity:0;visibility:hidden;transform:translateY(18px) scale(.96);transform-origin:bottom center;transition:opacity .24s ease,transform .38s cubic-bezier(.22,.61,.36,1),visibility 0s linear .38s;pointer-events:none}.moment-portrait-preview::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(8,9,8,.9),transparent 48%),linear-gradient(135deg,rgba(202,219,46,.1),transparent 42%)}.moment-portrait-preview img{width:100%;height:100%;object-fit:cover;filter:grayscale(.35) brightness(.78);transform:scale(1.04);transition:transform 1.8s cubic-bezier(.22,.61,.36,1),filter .35s}.moment-preview-play{position:absolute;z-index:2;left:50%;top:50%;width:46px;height:46px;display:grid;place-items:center;border-radius:50%;background:var(--accent);color:var(--bg);font-size:.7rem;transform:translate(-50%,-50%);box-shadow:0 0 28px rgba(202,219,46,.3)}.moment-portrait-preview small{position:absolute;z-index:2;left:14px;bottom:14px;font-size:.55rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--fg)}.moments-list figure:hover .moment-portrait-preview,.moments-list figure:focus-visible .moment-portrait-preview{opacity:1;visibility:visible;transform:none;transition-delay:0s}.moments-list figure:hover .moment-portrait-preview img,.moments-list figure:focus-visible .moment-portrait-preview img{transform:scale(1)}
         @keyframes posterBeat{0%,100%{transform:scale(1)}8%{transform:scale(1.04)}16%{transform:scale(1)}24%{transform:scale(1.025)}34%{transform:scale(1)}}@keyframes posterRing{0%{transform:scale(.35);opacity:.8}48%,100%{transform:scale(2.2);opacity:0}}@keyframes aboutScan{0%,100%{opacity:0;translate:-22vw 0}20%,70%{opacity:.7}80%{opacity:0;translate:48vw 0}}
-        @media(min-width:1025px) and (max-height:820px){.about-layout{padding-left:clamp(56px,7vw,108px)}.about-label{margin-bottom:14px}.about-intro{margin-top:14px}.about-description{margin-top:8px;line-height:1.5}.about-main-copy h3{margin-top:16px}.service-cloud{margin-top:10px}.service-chip{min-height:34px;padding:6px 12px}.moments-title::before{top:26px}.moments-title::after{top:62px}}
+        @media(min-width:1025px) and (max-height:820px){.about-layout{padding-left:clamp(56px,7vw,108px)}.about-label{margin-bottom:14px}.about-intro{margin-top:14px}.about-description{margin-top:8px;line-height:1.5}.about-main-copy h3{margin-top:16px;font-size:.9rem}.service-cloud{margin-top:10px;gap:7px}.service-row{gap:7px}.service-chip{min-height:43px;padding:7px 14px;font-size:.75rem}.service-chip i{width:22px;height:22px;flex-basis:22px}.moments-title::before{top:26px}.moments-title::after{top:62px}}
         @media(max-width:1100px){.about-screen{height:auto!important;min-height:100dvh;padding:96px 24px 212px!important}.about-layout{grid-template-columns:1fr .58fr;gap:28px;transform:translateY(-24px)}.about-main-copy h2{font-size:clamp(2.5rem,5.3vw,4rem)}.service-chip{min-height:38px}.moments-dock{left:0}}
         @media(max-width:760px){.about-screen{padding:96px 20px 0!important}.about-photo{inset:0;opacity:.18}.about-bg-symbol{width:110vw;left:-30%;bottom:40%;opacity:.025}.about-scan{display:none}.about-layout{grid-template-columns:1fr;gap:32px;transform:none}.about-description{font-size:.86rem}.flow-poster{max-width:430px;margin:auto}.moments-dock{position:relative;left:auto;right:auto;bottom:auto;width:calc(100% + 40px);height:150px;margin:42px -20px 0;grid-template-columns:130px 1fr}.moments-list{overflow-x:auto;display:flex}.moments-list figure{min-width:115px}}
       `}</style>
