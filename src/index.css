@@ -1,4 +1,19 @@
-/* Fonts loaded via <link> in index.html for non-blocking performance */
+@font-face {
+  font-family: 'FLOW Display';
+  src: url('/fonts/SpaceGrotesk-Variable.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'FLOW Text';
+  src: url('/fonts/Inter-Variable.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
 :root {
   --bg:        #1f211f;
   --bg-2:      #272827;
@@ -8,8 +23,8 @@
   --accent:    #cadb2e;
   --border:    rgba(230,231,231,.08);
   --border-h:  rgba(202,219,45,.25);
-  --f-display: 'Helvetica Now Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --f-body:    'Helvetica Now Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --f-display: 'FLOW Display', sans-serif;
+  --f-body:    'FLOW Text', sans-serif;
   --ease:      cubic-bezier(.22,.61,.36,1);
   --rail-width: clamp(116px, 7.3vw, 140px);
   --desktop-gutter: clamp(24px, 2.1vw, 40px);
@@ -28,6 +43,8 @@ body {
   font-family: var(--f-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-synthesis: none;
+  font-optical-sizing: auto;
   overflow-x: hidden;
 }
 
