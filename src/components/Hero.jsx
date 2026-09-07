@@ -40,17 +40,17 @@ export default function Hero() {
       <div ref={imgRef} className="hero-img-wrap" style={{ position: 'absolute', inset: 0 }}>
         <picture>
           <source
-            srcSet="/hero-runner-europe-4k-sm.webp 768w, /hero-runner-europe-4k.webp 2560w"
+            srcSet="/hero-background-sm.webp 768w, /hero-background.webp 2560w"
             sizes="100vw"
             type="image/webp"
           />
           <img
-            src="/hero-runner-europe-4k.png"
-            alt="European track athlete sprinting through dramatic light"
+            src="/hero-background.png"
+            alt="FLOW sports communications visual with neon pulse lines"
             fetchpriority="high"
             decoding="async"
-            width="2160" height="3853"
-            style={{ width: '100%', height: '115%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}
+            width="2048" height="1152"
+            style={{ width: '100%', height: '115%', objectFit: 'cover', objectPosition: '64% center', display: 'block' }}
           />
         </picture>
       </div>

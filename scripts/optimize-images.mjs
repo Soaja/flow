@@ -12,6 +12,8 @@ const jobs = [
   { src: 'hero-athlete.jpg',       w: 768,  q: 82, suffix: '-sm' },
   { src: 'hero-runner-europe-4k.png', w: 2560, q: 92 },
   { src: 'hero-runner-europe-4k.png', w: 768,  q: 84, suffix: '-sm' },
+  { src: 'hero-background.png',       w: 2560, q: 90 },
+  { src: 'hero-background.png',       w: 768,  q: 82, suffix: '-sm' },
 
   // Texture — barely visible (opacity .04), compress aggressively
   { src: 'texture.jpg',            w: 1920, q: 20 },
