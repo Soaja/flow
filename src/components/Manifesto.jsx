@@ -10,9 +10,11 @@ const services = [
 ];
 
 const moments = [
-  ['/athlete-run.webp', 'Run', '/jordan-the-one.mp4'], ['/athlete-shoe.webp', 'Detail'],
-  ['/athlete-silhouette.webp', 'Motion'], ['/athlete-woman.webp', 'Athlete'],
-  ['/athlete-parkour.webp', 'Culture'], ['/athlete-2.webp', 'Campaign'],
+  ['/athlete-run.webp', 'Run', '/jordan-the-one.mp4', '01'],
+  ['/artboard-2.png', 'Detail', null, '02'],
+  ['/athlete-silhouette.webp', 'Motion', '/metcon-fortfight.mp4', '03'],
+  ['/flow-logo.svg', 'Flow', null, '04—05', true],
+  ['/athlete-2.webp', 'Campaign', '/nike-midnight-run.mp4', '06'],
 ];
 
 export default function Manifesto() {
@@ -66,23 +68,23 @@ export default function Manifesto() {
       <div className="moments-dock">
         <div className="moments-title" aria-label="Moments from the field" />
         <div className="moments-list">
-          {moments.map(([src, label, videoSrc], index) => (
-            <figure key={src} tabIndex="0" onMouseEnter={playMoment} onMouseLeave={stopMoment} onFocus={playMoment} onBlur={stopMoment}>
+          {moments.map(([src, label, videoSrc, number, merged]) => (
+            <figure key={src} className={merged ? 'moment-merged' : (!videoSrc ? 'moment-static' : '')} tabIndex={videoSrc ? '0' : undefined} onMouseEnter={playMoment} onMouseLeave={stopMoment} onFocus={playMoment} onBlur={stopMoment}>
               {videoSrc
                 ? <video className="moment-cover-video" src={videoSrc} aria-label={label} preload="auto" muted playsInline />
                 : <img src={src} alt={label} loading="lazy" />}
-              <span className="moment-cover-cta" aria-hidden="true">
+              {videoSrc && <span className="moment-cover-cta" aria-hidden="true">
                 <b>Play video</b>
                 <i><svg viewBox="0 0 16 16"><path d="M5.25 3.4 12.4 8l-7.15 4.6V3.4Z" /></svg></i>
-              </span>
-              <div className="moment-portrait-preview" aria-hidden="true">
+              </span>}
+              {videoSrc && <div className="moment-portrait-preview" aria-hidden="true">
                 {videoSrc
                   ? <video src={videoSrc} loop playsInline preload="auto" />
                   : <img src={src} alt="" loading="lazy" />}
                 {!videoSrc && <span className="moment-preview-play">▶</span>}
-                <small>0{index + 1} / {label}</small>
-              </div>
-              <figcaption>0{index + 1} / {label}</figcaption>
+                <small>{number} / {label}</small>
+              </div>}
+              <figcaption>{number} / {label}</figcaption>
             </figure>
           ))}
         </div>
@@ -92,6 +94,10 @@ export default function Manifesto() {
         .moment-portrait-preview{pointer-events:auto!important}
         .moments-list{height:100%;min-height:0}
         .moments-list figure{height:100%;min-height:0}
+        .moments-list .moment-merged{grid-column:span 2;background:var(--accent);overflow:hidden}
+        .moments-list .moment-merged>img{width:72%;height:100%;margin:auto;display:block;object-fit:contain;filter:brightness(0);transform:none!important}
+        .moments-list .moment-merged figcaption{color:var(--bg)}
+        .moments-list .moment-static>img{filter:none!important;transform:none!important}
         .moments-list figure::after{display:none!important}
         .moment-cover-cta{position:absolute;z-index:3;left:50%;top:50%;display:flex;flex-direction:column;align-items:center;gap:8px;transform:translate(-50%,-50%);pointer-events:none;transition:opacity .2s ease,transform .3s cubic-bezier(.22,.61,.36,1)}
         .moment-cover-cta b{font-family:var(--f-display);font-size:.54rem;font-style:normal;font-weight:700;line-height:1;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);text-shadow:0 0 16px rgba(202,219,46,.42);white-space:nowrap}
