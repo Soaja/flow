@@ -50,7 +50,7 @@ export default function Hero() {
             fetchpriority="high"
             decoding="async"
             width="2048" height="1152"
-            style={{ width: '100%', height: '115%', objectFit: 'cover', objectPosition: '64% center', display: 'block' }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'right center', display: 'block' }}
           />
         </picture>
       </div>
