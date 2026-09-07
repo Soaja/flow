@@ -67,12 +67,8 @@ export default function Nav() {
 
   return (
     <>
-      <header className="vertical-header">
-        <span
-          className="section-progress"
-          style={{ '--progress-height': `calc(34vh + ${(activeIndex + 1) * 64}px)` }}
-          aria-hidden="true"
-        />
+      <header className="vertical-header" data-active-index={activeIndex}>
+        <span className="section-progress" aria-hidden="true" />
         <a href="#hero" className="vertical-logo" aria-label="FLOW home" onClick={(event) => navigateTo(event, '#hero')}>
           <img src="/flow-logo.svg" alt="" />
         </a>

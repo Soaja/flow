@@ -89,7 +89,7 @@ export default function Hero() {
 
         <h1 style={{
           fontFamily: 'var(--f-display)',
-          fontSize: 'clamp(3.8rem, 9.5vw, 10rem)',
+          fontSize: 'clamp(3.8rem, min(9.5vw, 15vh), 10rem)',
           fontWeight: 700, lineHeight: .92,
           letterSpacing: '-.04em', textTransform: 'uppercase',
           color: 'var(--fg)', maxWidth: 900, marginBottom: 32,
@@ -150,6 +150,9 @@ export default function Hero() {
         .hero-pulse img { position:relative; z-index:1; width:150%; max-width:none; height:122%; object-fit:contain; filter:brightness(0) saturate(100%) invert(87%) sepia(54%) saturate(1028%) hue-rotate(16deg) brightness(91%) contrast(88%) blur(.15px); clip-path:inset(0 100% 0 0); animation:ekgReveal 3.2s cubic-bezier(.4,0,.18,1) infinite; }
         @keyframes ekgReveal { 0%,4%{clip-path:inset(0 100% 0 0);opacity:0} 7%{opacity:.88} 46%{clip-path:inset(0);opacity:.88} 58%{clip-path:inset(0);opacity:.76} 78%,100%{clip-path:inset(0);opacity:0} }
         @keyframes ekgScan { 0%,4%{left:0;opacity:0} 7%{left:0;opacity:1} 46%{left:100%;opacity:1} 51%,100%{left:100%;opacity:0} }
+
+        @media (min-width:1025px) { #hero{padding-bottom:clamp(76px,14.8vh,160px)!important} #hero .container{padding-inline:var(--desktop-gutter)} }
+        @media (min-width:1025px) and (max-height:820px) { #hero .hero-tag{margin-bottom:14px!important} #hero h1{margin-bottom:20px!important} #hero .hero-sub{margin-bottom:24px!important;font-size:.94rem!important} }
 
         @media (max-width: 768px) { #hero { padding-bottom: 96px; } .hero-pulse{inset:-8% -45% -8% -42%;opacity:.14}.hero-pulse img{width:155%;height:112%} }
       `}</style>
