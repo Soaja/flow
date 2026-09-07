@@ -117,7 +117,7 @@ export default function Hero() {
 
         {/* Scroll cue */}
         <div style={{
-          position: 'absolute', bottom: -60, right: 0,
+          position: 'absolute', bottom: -60, left: '50%', transform: 'translateX(-50%)',
           display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
           fontSize: '.65rem', letterSpacing: '.14em', textTransform: 'uppercase',
           color: 'rgba(230,231,231,.4)',

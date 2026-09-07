@@ -10,13 +10,28 @@ const services = [
 ];
 
 const moments = [
-  ['/athlete-run.webp', 'Run'], ['/athlete-shoe.webp', 'Detail'],
+  ['/athlete-run.webp', 'Run', '/jordan-the-one.mp4'], ['/athlete-shoe.webp', 'Detail'],
   ['/athlete-silhouette.webp', 'Motion'], ['/athlete-woman.webp', 'Athlete'],
   ['/athlete-parkour.webp', 'Culture'], ['/athlete-2.webp', 'Campaign'],
 ];
 
 export default function Manifesto() {
   const sectionRef = useRef(null);
+  const playMoment = (event) => {
+    const video = event.currentTarget.querySelector('.moment-portrait-preview video');
+    if (video) {
+      video.muted = false;
+      video.volume = 1;
+      video.play().catch(() => {});
+    }
+  };
+  const stopMoment = (event) => {
+    const video = event.currentTarget.querySelector('.moment-portrait-preview video');
+    if (video) {
+      video.pause();
+      video.currentTime = 0;
+    }
+  };
   useGsapIdle(() => {
     const ctx = gsap.context(() => {
       gsap.from('.about-main-copy > *', { y: 34, opacity: 0, stagger: .07, duration: .72, ease: 'power3.out', scrollTrigger: { trigger: sectionRef.current, start: 'top 60%' } });
@@ -51,13 +66,50 @@ export default function Manifesto() {
       <div className="moments-dock">
         <div className="moments-title" aria-label="Moments from the field" />
         <div className="moments-list">
-          {moments.map(([src, label], index) => (
-            <figure key={src}><img src={src} alt={label} loading="lazy" /><figcaption>0{index + 1} / {label}</figcaption></figure>
+          {moments.map(([src, label, videoSrc], index) => (
+            <figure key={src} tabIndex="0" onMouseEnter={playMoment} onMouseLeave={stopMoment} onFocus={playMoment} onBlur={stopMoment}>
+              {videoSrc
+                ? <video className="moment-cover-video" src={videoSrc} aria-label={label} preload="auto" muted playsInline />
+                : <img src={src} alt={label} loading="lazy" />}
+              <span className="moment-cover-cta" aria-hidden="true">
+                <b>Play video</b>
+                <i><svg viewBox="0 0 16 16"><path d="M5.25 3.4 12.4 8l-7.15 4.6V3.4Z" /></svg></i>
+              </span>
+              <div className="moment-portrait-preview" aria-hidden="true">
+                {videoSrc
+                  ? <video src={videoSrc} loop playsInline preload="auto" />
+                  : <img src={src} alt="" loading="lazy" />}
+                {!videoSrc && <span className="moment-preview-play">▶</span>}
+                <small>0{index + 1} / {label}</small>
+              </div>
+              <figcaption>0{index + 1} / {label}</figcaption>
+            </figure>
           ))}
         </div>
       </div>
 
       <style>{`
+        .moment-portrait-preview{pointer-events:auto!important}
+        .moments-list{height:100%;min-height:0}
+        .moments-list figure{height:100%;min-height:0}
+        .moments-list figure::after{display:none!important}
+        .moment-cover-cta{position:absolute;z-index:3;left:50%;top:50%;display:flex;flex-direction:column;align-items:center;gap:8px;transform:translate(-50%,-50%);pointer-events:none;transition:opacity .2s ease,transform .3s cubic-bezier(.22,.61,.36,1)}
+        .moment-cover-cta b{font-family:var(--f-display);font-size:.54rem;font-style:normal;font-weight:700;line-height:1;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);text-shadow:0 0 16px rgba(202,219,46,.42);white-space:nowrap}
+        .moment-cover-cta i{width:38px;height:38px;display:grid;place-items:center;border-radius:50%;background:var(--accent);box-shadow:0 0 0 1px rgba(202,219,46,.38),0 0 24px rgba(202,219,46,.34);transition:transform .28s cubic-bezier(.22,.61,.36,1),box-shadow .28s ease}
+        .moment-cover-cta svg{width:15px;height:15px;fill:var(--bg);transform:translateX(1px)}
+        .moments-list figure:hover .moment-cover-cta,.moments-list figure:focus-visible .moment-cover-cta{opacity:0;transform:translate(-50%,-42%) scale(.92)}
+        .moments-list .moment-cover-cta{z-index:6!important;display:flex!important;opacity:1!important;visibility:visible!important;top:48%!important;gap:10px!important}
+        .moments-list .moment-cover-cta b{padding:7px 11px;border:1px solid rgba(202,219,46,.48);border-radius:999px;background:rgba(8,10,8,.78);color:var(--accent)!important;box-shadow:0 0 20px rgba(202,219,46,.12);backdrop-filter:blur(8px)}
+        .moments-list .moment-cover-cta i{width:46px!important;height:46px!important;box-shadow:0 0 0 1px var(--accent),0 0 32px rgba(202,219,46,.58)!important}
+        .moments-list figure>.moment-cover-video{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;filter:grayscale(1) brightness(.62);transition:filter .35s}
+        .moments-list figure:hover>.moment-cover-video,.moments-list figure:focus-visible>.moment-cover-video{filter:grayscale(0) brightness(.72)}
+        .moment-portrait-preview video{width:100%;height:100%;display:block;object-fit:cover;filter:brightness(.86) contrast(1.04);transform:scale(1.015);transition:transform 1.8s cubic-bezier(.22,.61,.36,1)}
+        .moments-list figure:hover .moment-portrait-preview video,.moments-list figure:focus-visible .moment-portrait-preview video{transform:scale(1)}
+        @media(min-width:761px){
+          .moment-portrait-preview{position:fixed!important;z-index:20!important;top:50%!important;right:clamp(92px,8vw,154px)!important;bottom:auto!important;left:auto!important;width:auto!important;height:min(78vh,760px)!important;aspect-ratio:9/16!important;transform:translateY(-46%) scale(.96)!important;transform-origin:center!important}
+          .moments-list figure:hover .moment-portrait-preview,.moments-list figure:focus-visible .moment-portrait-preview{transform:translateY(-50%) scale(1)!important}
+        }
+        @media(max-width:760px){.moment-portrait-preview{display:none!important}}
         .about-screen{position:relative;display:flex;align-items:center;padding:clamp(28px,5.4vh,58px) clamp(28px,2.5vw,48px) clamp(118px,15.5vh,148px) var(--rail-width)!important;background:#1f211f;overflow:hidden;isolation:isolate}
         .about-photo{position:absolute;z-index:-4;inset:0 38% 0 0;background:url('/athlete-silhouette.webp') center/cover no-repeat;filter:grayscale(1) contrast(1.15);opacity:.32;transform:scale(1.04)}
         .about-screen::before{content:'';position:absolute;z-index:-3;inset:0;background:linear-gradient(90deg,rgba(31,33,31,.58) 0%,rgba(31,33,31,.82) 43%,#1f211f 67%),radial-gradient(circle at 25% 40%,rgba(202,219,46,.08),transparent 30%)}
@@ -87,7 +139,8 @@ export default function Manifesto() {
         .flow-poster p{position:absolute;left:22px;bottom:52px;font-family:var(--f-display);font-size:clamp(1.05rem,1.7vw,1.75rem);font-weight:700;line-height:.95;letter-spacing:-.035em;text-transform:uppercase}
         .moments-dock{position:absolute;left:var(--rail-width);right:0;bottom:0;height:clamp(142px,17.6vh,190px);display:grid;grid-template-columns:clamp(190px,12.5vw,240px) 1fr;background:#0d0e0d;border-top:1px solid rgba(202,219,46,.4);z-index:3}
         .moments-title{position:relative;overflow:hidden;background:var(--accent);border-right:1px solid rgba(31,33,31,.22);font-family:var(--f-display);text-transform:uppercase;color:var(--bg)}.moments-title::before{content:'MOMENTS';position:absolute;z-index:2;left:28px;top:36px;font-size:clamp(1.45rem,1.8vw,2rem);font-weight:700;line-height:1;letter-spacing:-.035em;color:var(--bg)}.moments-title::after{content:'FROM THE FIELD';position:absolute;z-index:2;left:30px;top:76px;font-size:.58rem;font-weight:700;letter-spacing:.14em;color:var(--bg)}
-        .moments-list{display:grid;grid-template-columns:repeat(6,1fr);min-width:0}.moments-list figure{position:relative;overflow:hidden;border-right:1px solid rgba(231,233,234,.1);background:#151715}.moments-list figure::after{content:'▶';position:absolute;right:12px;top:12px;width:28px;height:28px;display:grid;place-items:center;border:1px solid rgba(231,233,234,.45);border-radius:50%;font-size:.48rem;color:var(--fg);opacity:.72;transition:background .25s,color .25s,border-color .25s}.moments-list img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) brightness(.62);transition:transform .45s,filter .35s}.moments-list figure:hover img{transform:scale(1.08);filter:grayscale(0) brightness(.85)}.moments-list figure:hover::after{background:var(--accent);border-color:var(--accent);color:var(--bg)}.moments-list figcaption{position:absolute;left:12px;bottom:11px;font-size:.5rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fg)}
+        .moments-list{display:grid;grid-template-columns:repeat(6,1fr);min-width:0;overflow:visible}.moments-list figure{position:relative;overflow:visible;border-right:1px solid rgba(231,233,234,.1);background:#151715;outline:none}.moments-list figure>img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) brightness(.62);transition:filter .35s}.moments-list figure::after{content:'▶';position:absolute;z-index:2;right:12px;top:12px;width:28px;height:28px;display:grid;place-items:center;border:1px solid rgba(231,233,234,.45);border-radius:50%;font-size:.48rem;color:var(--fg);opacity:.72;transition:background .25s,color .25s,border-color .25s}.moments-list figure:hover>img,.moments-list figure:focus-visible>img{filter:grayscale(0) brightness(.72)}.moments-list figure:hover::after,.moments-list figure:focus-visible::after{background:var(--accent);border-color:var(--accent);color:var(--bg)}.moments-list figcaption{position:absolute;z-index:2;left:12px;bottom:11px;font-size:.5rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fg)}
+        .moment-portrait-preview{position:absolute;z-index:8;left:0;bottom:0;width:100%;aspect-ratio:9/16;overflow:hidden;background:#0b0c0b;border:1px solid rgba(202,219,46,.7);box-shadow:0 -28px 80px rgba(0,0,0,.62),0 0 34px rgba(202,219,46,.1);opacity:0;visibility:hidden;transform:translateY(18px) scale(.96);transform-origin:bottom center;transition:opacity .24s ease,transform .38s cubic-bezier(.22,.61,.36,1),visibility 0s linear .38s;pointer-events:none}.moment-portrait-preview::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(8,9,8,.9),transparent 48%),linear-gradient(135deg,rgba(202,219,46,.1),transparent 42%)}.moment-portrait-preview img{width:100%;height:100%;object-fit:cover;filter:grayscale(.35) brightness(.78);transform:scale(1.04);transition:transform 1.8s cubic-bezier(.22,.61,.36,1),filter .35s}.moment-preview-play{position:absolute;z-index:2;left:50%;top:50%;width:46px;height:46px;display:grid;place-items:center;border-radius:50%;background:var(--accent);color:var(--bg);font-size:.7rem;transform:translate(-50%,-50%);box-shadow:0 0 28px rgba(202,219,46,.3)}.moment-portrait-preview small{position:absolute;z-index:2;left:14px;bottom:14px;font-size:.55rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--fg)}.moments-list figure:hover .moment-portrait-preview,.moments-list figure:focus-visible .moment-portrait-preview{opacity:1;visibility:visible;transform:none;transition-delay:0s}.moments-list figure:hover .moment-portrait-preview img,.moments-list figure:focus-visible .moment-portrait-preview img{transform:scale(1)}
         @keyframes posterBeat{0%,100%{transform:scale(1)}8%{transform:scale(1.04)}16%{transform:scale(1)}24%{transform:scale(1.025)}34%{transform:scale(1)}}@keyframes posterRing{0%{transform:scale(.35);opacity:.8}48%,100%{transform:scale(2.2);opacity:0}}@keyframes aboutScan{0%,100%{opacity:0;translate:-22vw 0}20%,70%{opacity:.7}80%{opacity:0;translate:48vw 0}}
         @media(min-width:1025px) and (max-height:820px){.about-layout{padding-left:clamp(56px,7vw,108px)}.about-label{margin-bottom:14px}.about-intro{margin-top:14px}.about-description{margin-top:8px;line-height:1.5}.about-main-copy h3{margin-top:16px}.service-cloud{margin-top:10px}.service-chip{min-height:34px;padding:6px 12px}.moments-title::before{top:26px}.moments-title::after{top:62px}}
         @media(max-width:1100px){.about-screen{height:auto!important;min-height:100dvh;padding:96px 24px 212px!important}.about-layout{grid-template-columns:1fr .58fr;gap:28px;transform:translateY(-24px)}.about-main-copy h2{font-size:clamp(2.5rem,5.3vw,4rem)}.service-chip{min-height:38px}.moments-dock{left:0}}
