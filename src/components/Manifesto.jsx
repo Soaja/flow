@@ -141,16 +141,16 @@ export default function Manifesto() {
         .about-grid{position:absolute;z-index:-2;inset:0;background-image:linear-gradient(rgba(231,233,234,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(231,233,234,.035) 1px,transparent 1px);background-size:72px 72px;mask-image:linear-gradient(90deg,#000,transparent 72%)}
         .about-bg-symbol{position:absolute;z-index:-1;left:-8%;bottom:5%;width:min(58vw,900px);opacity:.035;filter:drop-shadow(0 0 30px var(--accent));transform:rotate(-7deg);pointer-events:none}
         .about-scan{position:absolute;z-index:0;top:-20%;bottom:-20%;left:28%;width:1px;background:linear-gradient(transparent,rgba(202,219,46,.85),transparent);box-shadow:0 0 28px rgba(202,219,46,.5);transform:rotate(18deg);animation:aboutScan 7s ease-in-out infinite;pointer-events:none}
-        .about-layout{width:100%;margin:0;padding-left:clamp(72px,8vw,154px);display:block;transform:translateY(clamp(-38px,-3.5vh,-18px))}
-        .about-main-copy{width:min(1080px,76vw);max-width:100%}
-        .about-label{display:flex;align-items:center;gap:14px;margin-bottom:24px;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+        .about-layout{width:100%;margin:0;padding-left:clamp(82px,8.5vw,164px);display:block;transform:translateY(clamp(-42px,-3.8vh,-20px))}
+        .about-main-copy{width:min(1160px,80vw);max-width:100%}
+        .about-label{display:flex;align-items:center;gap:15px;margin-bottom:27px;font-size:.72rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
         .about-label::before{content:'';width:34px;height:1px;background:var(--accent)}
         .about-label span{font-size:.55rem;color:rgba(202,219,46,.68)}
-        .about-main-copy h2{max-width:1040px;font-family:var(--f-display);font-size:clamp(2.65rem,min(4.15vw,7.4vh),4.65rem);font-weight:700;line-height:.94;letter-spacing:-.045em;text-transform:uppercase;color:var(--fg)}
-        .about-main-copy h2 strong,.about-main-copy h2 span{display:block}.about-main-copy h2 strong{color:var(--accent);font-weight:700}.about-main-copy h2 span{margin-top:8px;color:var(--fg)}
-        .about-intro{margin-top:24px;font-family:var(--f-display);font-size:clamp(.96rem,1.15vw,1.18rem);font-weight:700;text-transform:uppercase;letter-spacing:.035em;color:var(--fg)}
-        .about-description{max-width:680px;margin-top:12px;font-size:clamp(.8rem,.88vw,.92rem);line-height:1.68;color:rgba(231,233,234,.64)}
-        .about-main-copy h3{margin-top:28px;font-family:var(--f-display);font-size:clamp(.92rem,1.15vw,1.18rem);font-weight:700;letter-spacing:.055em;text-transform:uppercase;color:var(--fg)}
+        .about-main-copy h2{max-width:1120px;font-family:var(--f-display);font-size:clamp(3rem,min(4.75vw,8vh),5.3rem);font-weight:700;line-height:.91;letter-spacing:-.052em;text-transform:uppercase;color:var(--fg)}
+        .about-main-copy h2 strong,.about-main-copy h2 span{display:block}.about-main-copy h2 strong{color:var(--accent);font-weight:700}.about-main-copy h2 span{margin-top:11px;color:var(--fg)}
+        .about-intro{margin-top:27px;font-family:var(--f-display);font-size:clamp(1.05rem,1.28vw,1.34rem);font-weight:700;line-height:1.12;text-transform:uppercase;letter-spacing:.025em;color:var(--fg)}
+        .about-description{max-width:735px;margin-top:14px;font-size:clamp(.88rem,.98vw,1.02rem);line-height:1.62;color:rgba(231,233,234,.68)}
+        .about-main-copy h3{margin-top:30px;font-family:var(--f-display);font-size:clamp(1rem,1.25vw,1.28rem);font-weight:700;letter-spacing:.045em;text-transform:uppercase;color:var(--fg)}
         .service-cloud{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-top:18px;max-width:1040px}
         .service-row{display:flex;flex-wrap:wrap;gap:10px}
         .service-chip{display:flex;align-items:center;gap:13px;min-height:52px;padding:10px 20px;border:1px solid rgba(231,233,234,.2);border-radius:999px;background:rgba(12,14,12,.3);backdrop-filter:blur(10px);font-size:clamp(.78rem,.92vw,.98rem);font-weight:600;color:rgba(231,233,234,.94);transition:background .25s,border-color .25s,color .25s,transform .25s}
