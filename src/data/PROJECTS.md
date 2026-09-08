@@ -6,6 +6,8 @@ Each record has a unique `slug`, `client`, `category`, `title`, `subtitle`, `rol
 
 Pages use `/?project=slug`, which supports direct links and refreshes on static hosting without rewrite configuration. Unknown slugs show a project-not-found view.
 
+The portfolio collection is at `/?page=work`, reached by Load more on the homepage. `components/WorkPage.jsx` reads the same project records and adds three explicitly marked Coming soon display cards. Filters separate released projects and upcoming placeholders. Placeholders are not links. Desktop hover/focus previews load muted video on demand and respect reduced-motion preferences; mobile visitors open the case study directly.
+
 For a future CMS integration, normalize CMS records to this shape and supply the same collection to the listing and detail view. No per-project JSX is needed. The current player supports direct video files; YouTube/Vimeo would require an embed adapter.
 
 The initial three entries use existing local video files and illustrative site photography. Descriptions and roles are drafts, not verified case-study claims. Metrics currently use 00 and Metric one/two/three as placeholders; replace these with approved numbers and labels. Year and location are intentionally unset. Replace these and gallery images with approved client material before publishing. Thumbnails and playback share a fixed 9:16 portrait frame in the left column. Challenge and Approach are stacked in the right column; on mobile, the film appears above the text. Starting, pausing or failing playback does not change the layout. Media fills the frame without letterboxing; non-9:16 sources are cropped to fit.

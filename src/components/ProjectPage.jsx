@@ -50,7 +50,7 @@ export default function ProjectPage({ project, next }) {
   return (
     <article className="project-page">
       <div className="project-container">
-        <a className="project-back" href="/#media"><Arrow back /> All work</a>
+        <a className="project-back" href="/?page=work"><Arrow back /> All work</a>
         <header className="project-hero">
           <img className="project-symbol" src="/flow-symbol.svg" alt="" aria-hidden="true" />
           <div className="project-hero-copy">

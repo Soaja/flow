@@ -93,7 +93,7 @@ export default function Nav({ projectPage = false }) {
         </a>
         <nav className="vertical-nav" aria-label="Primary navigation">
           {links.map((link) => (
-            <a key={link.href} href={projectPage ? `/${link.href}` : link.href} onClick={(event) => navigateTo(event, link.href)} aria-current={active === link.href.slice(1) ? 'page' : undefined} className={`vertical-link${active === link.href.slice(1) ? ' active' : ''}`}>
+            <a key={link.href} href={projectPage ? (link.href === '#media' ? '/?page=work' : `/${link.href}`) : link.href} onClick={(event) => navigateTo(event, link.href)} aria-current={active === link.href.slice(1) ? 'page' : undefined} className={`vertical-link${active === link.href.slice(1) ? ' active' : ''}`}>
               <span>{link.label}</span>
             </a>
           ))}
@@ -111,7 +111,7 @@ export default function Nav({ projectPage = false }) {
         <img className="mobile-menu-symbol" src="/flow-symbol.svg" alt="" aria-hidden="true" />
         <p className="mobile-menu-eyebrow">Navigate the flow</p>
         {links.map((link, index) => (
-          <a key={link.href} className={active === link.href.slice(1) ? 'active' : ''} href={projectPage ? `/${link.href}` : link.href} onClick={(event) => navigateTo(event, link.href)}><small>0{index + 1}</small><span>{link.label}</span></a>
+          <a key={link.href} className={active === link.href.slice(1) ? 'active' : ''} href={projectPage ? (link.href === '#media' ? '/?page=work' : `/${link.href}`) : link.href} onClick={(event) => navigateTo(event, link.href)}><small>0{index + 1}</small><span>{link.label}</span></a>
         ))}
         <p className="mobile-menu-footer">Belgrade — Europe — Worldwide</p>
       </div>
