@@ -7,9 +7,9 @@ const links = [
   { href: '#contact', label: 'Contact us' },
 ];
 
-export default function Nav() {
+export default function Nav({ projectPage = false }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [active, setActive] = useState('hero');
+  const [active, setActive] = useState(projectPage ? 'media' : 'hero');
   const animationRef = useRef(null);
   const activeIndex = Math.max(0, links.findIndex((link) => link.href === `#${active}`));
 
@@ -40,6 +40,7 @@ export default function Nav() {
 
   const close = () => setMenuOpen(false);
   const navigateTo = (event, href) => {
+    if (projectPage) return;
     const target = document.querySelector(href);
     if (!target) return;
     event.preventDefault();
@@ -87,12 +88,12 @@ export default function Nav() {
     <>
       <header className="vertical-header" data-active-index={activeIndex}>
         <span className="section-progress" aria-hidden="true" />
-        <a href="#hero" className="vertical-logo" aria-label="FLOW home" onClick={(event) => navigateTo(event, '#hero')}>
+        <a href={projectPage ? '/#hero' : '#hero'} className="vertical-logo" aria-label="FLOW home" onClick={(event) => navigateTo(event, '#hero')}>
           <img src="/flow-logo.svg" alt="" />
         </a>
         <nav className="vertical-nav" aria-label="Primary navigation">
           {links.map((link) => (
-            <a key={link.href} href={link.href} onClick={(event) => navigateTo(event, link.href)} aria-current={active === link.href.slice(1) ? 'page' : undefined} className={`vertical-link${active === link.href.slice(1) ? ' active' : ''}`}>
+            <a key={link.href} href={projectPage ? `/${link.href}` : link.href} onClick={(event) => navigateTo(event, link.href)} aria-current={active === link.href.slice(1) ? 'page' : undefined} className={`vertical-link${active === link.href.slice(1) ? ' active' : ''}`}>
               <span>{link.label}</span>
             </a>
           ))}
@@ -110,7 +111,7 @@ export default function Nav() {
         <img className="mobile-menu-symbol" src="/flow-symbol.svg" alt="" aria-hidden="true" />
         <p className="mobile-menu-eyebrow">Navigate the flow</p>
         {links.map((link, index) => (
-          <a key={link.href} className={active === link.href.slice(1) ? 'active' : ''} href={link.href} onClick={(event) => navigateTo(event, link.href)}><small>0{index + 1}</small><span>{link.label}</span></a>
+          <a key={link.href} className={active === link.href.slice(1) ? 'active' : ''} href={projectPage ? `/${link.href}` : link.href} onClick={(event) => navigateTo(event, link.href)}><small>0{index + 1}</small><span>{link.label}</span></a>
         ))}
         <p className="mobile-menu-footer">Belgrade — Europe — Worldwide</p>
       </div>

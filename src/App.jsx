@@ -3,6 +3,11 @@ import Loader  from './components/Loader';
 import Nav     from './components/Nav';
 import Hero    from './components/Hero';
 import SocialRail from './components/SocialRail';
+import { projects } from './data/projects';
+const ProjectPage = lazy(() => import('./components/ProjectPage'));
+const projectSlug = new URLSearchParams(window.location.search).get('project');
+const projectIndex = projects.findIndex(project => project.slug === projectSlug);
+const isProject = projectIndex !== -1;
 
 /* Lazy-load everything below the fold — parsed only after first paint */
 const Manifesto  = lazy(() => import('./components/Manifesto'));
@@ -10,7 +15,24 @@ const MediaHub   = lazy(() => import('./components/MediaHub'));
 const Contact    = lazy(() => import('./components/Contact'));
 
 export default function App() {
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(Boolean(projectSlug));
+
+  useEffect(() => {
+    if (projectSlug || !loaded || !window.location.hash) return;
+    const id = window.location.hash.slice(1);
+    const scrollToSection = () => {
+      const target = document.getElementById(id);
+      if (!target) return false;
+      target.scrollIntoView({ behavior: 'instant' });
+      return true;
+    };
+    if (scrollToSection()) return;
+    const observer = new MutationObserver(() => {
+      if (scrollToSection()) observer.disconnect();
+    });
+    observer.observe(document.getElementById('root'), { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [loaded]);
 
   // Custom lagged cursor — deferred until browser is idle (no TBT impact)
   useEffect(() => {
@@ -73,15 +95,13 @@ export default function App() {
 
       <main>
         {/* Above-fold — always eager */}
-        <Nav />
+        <Nav projectPage={Boolean(projectSlug)} />
         <SocialRail />
-        <Hero />
+        {!projectSlug && <Hero />}
 
         {/* Below-fold — lazy loaded */}
         <Suspense fallback={null}>
-          <Manifesto />
-          <MediaHub />
-          <Contact />
+          {isProject ? <ProjectPage project={projects[projectIndex]} next={projects[(projectIndex + 1) % projects.length]} /> : projectSlug ? <div style={{ padding: '160px 15%' }}><h1>Project not found.</h1><a href="/#media">Back to our work ?</a></div> : <><Manifesto /><MediaHub /><Contact /></>}
         </Suspense>
       </main>
 
