@@ -12,6 +12,31 @@ function Arrow() {
   return <svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" stroke="currentColor" strokeWidth="1.5" /></svg>;
 }
 
+function FlowSculpture() {
+  const move = event => {
+    if (event.pointerType !== 'mouse' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    event.currentTarget.style.setProperty('--flow-x', `${((event.clientX - bounds.left) / bounds.width - .5) * 20}deg`);
+    event.currentTarget.style.setProperty('--flow-y', `${-((event.clientY - bounds.top) / bounds.height - .5) * 16}deg`);
+  };
+  const reset = event => {
+    event.currentTarget.style.setProperty('--flow-x', '0deg');
+    event.currentTarget.style.setProperty('--flow-y', '0deg');
+  };
+  return <a className="flow-sculpture" href="#work-collection" aria-label="Explore FLOW projects" onPointerMove={move} onPointerLeave={reset}>
+    <div className="flow-sculpture-stage" aria-hidden="true">
+      <div className="flow-sculpture-halo" />
+      <div className="flow-sculpture-stack">
+        {[0, 1, 2, 3, 4, 5].map(layer => <img key={layer} className="flow-sculpture-layer" src={layer === 5 ? '/flow-symbol.svg' : '/flow-symbol-outline.svg'} alt="" style={{ '--layer': layer }} />)}
+      </div>
+      <span className="flow-sculpture-axis flow-sculpture-axis--top">+</span>
+      <span className="flow-sculpture-axis flow-sculpture-axis--bottom">+</span>
+      <img className="flow-sculpture-wordmark" src="/flow-logo.svg" alt="" />
+    </div>
+    <span className="flow-sculpture-link"><span>Enter the flow</span><Arrow /></span>
+  </a>;
+}
+
 function ProjectCard({ project, index }) {
   const video = useRef(null);
   const [preview, setPreview] = useState(false);
@@ -52,8 +77,8 @@ export default function WorkPage() {
 
   return <div className="work-archive">
     <header className="work-archive-hero">
-      <div className="work-archive-topline"><a href="/#media">← Back to FLOW</a><span>Independent spirit. Collective impact.</span></div>
-      <div className="work-archive-title"><h1>OUR<br /><span>WORK</span><sup>({String(projects.length).padStart(2, '0')})</sup></h1><div className="work-archive-hero-side"><img src="/flow-symbol.svg" alt="" aria-hidden="true" /><p>Made to move.<br />Built to be felt.</p><a href="#work-collection" aria-label="Explore the work collection"><span>Explore the collection</span><Arrow /></a></div></div>
+      <div className="work-archive-topline"><a href="/#media">← Back to FLOW</a></div>
+      <div className="work-archive-title"><h1>OUR<br /><span>WORK</span><sup>({String(projects.length).padStart(2, '0')})</sup></h1><FlowSculpture /></div>
       <div className="work-archive-intro"><span className="work-archive-kicker"><i /> Sport. Culture. In motion.</span><p>Ideas that leave the deck.<br />Stories that enter the culture.</p></div>
     </header>
     <section id="work-collection" className="work-archive-collection" aria-label="Our work collection">
