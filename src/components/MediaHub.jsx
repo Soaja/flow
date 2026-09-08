@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import './WorkPortal.css';
 import { projects, projectHref } from '../data/projects';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -66,8 +67,18 @@ export default function MediaHub() {
               </div>
             </a>
           ))}
+          <a href="/?page=work" className="flow-door" aria-label="Load more projects: enter Our Work">
+            <span className="flow-door-top"><span>FLOW / ACCESS</span><span aria-hidden="true">04</span></span>
+            <span className="flow-door-space" aria-hidden="true">
+              <span className="flow-door-depth"><i /><i /><i /><i /></span>
+              <img className="flow-door-symbol" src="/flow-symbol.svg" alt="" />
+              <span className="flow-door-panel flow-door-panel--left" /><span className="flow-door-panel flow-door-panel--right" />
+              <span className="flow-door-seam" />
+            </span>
+            <span className="flow-door-copy"><span className="flow-door-eyebrow">Step inside</span><span className="flow-door-title">LOAD<br />MORE<span className="flow-door-dot">.</span></span></span>
+            <span className="flow-door-bottom"><span>Enter the flow</span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.5" /></svg></span>
+          </a>
         </div>
-        <div className="work-load-more-wrap"><a href="/?page=work" className="work-load-more">Load more <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" stroke="currentColor" strokeWidth="1.5" /></svg></a></div>
       </div>
       <h2 className="work-brutal"><span>Our</span><span>Work</span></h2>
       <style>{`
@@ -82,9 +93,7 @@ export default function MediaHub() {
         .media-card-wrap { border:1px solid rgba(231,233,234,.1); background:#161816; box-shadow:0 22px 55px rgba(0,0,0,.24); }
         @media(min-width:1025px) and (max-height:820px){.media-cards-grid{height:60vh}.media-card-text{padding:0 18px 18px!important}.play-btn{width:46px;height:46px}}
         @media(max-width:900px){.work-showcase{height:auto!important;min-height:100svh;padding:104px 0 38px!important}.work-content{padding:0!important}.media-cards-grid{display:flex!important;width:100%;height:auto;max-height:none;justify-content:flex-start;gap:10px;padding:0 20px 6px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:20px;scrollbar-width:none}.media-cards-grid::-webkit-scrollbar{display:none}.media-card-wrap{flex:0 0 78vw;width:78vw;height:auto;aspect-ratio:9/16;scroll-snap-align:start}.media-img-wrap{width:100%;height:100%;min-height:0;aspect-ratio:9/16!important}.media-card-text{padding:0 18px 20px!important}.media-card-text p{font-size:.6rem!important}.media-card-text h3{font-size:1rem!important}.card-img{filter:grayscale(0);will-change:auto}.play-btn{transform:translate(-50%,-50%) scale(1);width:52px;height:52px}.work-brutal{position:relative;right:auto;bottom:auto;display:flex;margin:42px 0 0;padding:0 18px;font-size:20.5vw;line-height:.76;gap:.16em;white-space:nowrap}.work-brutal span{display:inline}.work-bg-image{inset:0;opacity:.15;transform:none}.work-bg-grid{background-size:44px 44px}}
-        .work-load-more-wrap{display:flex;justify-content:center;margin-top:20px;position:relative;z-index:4}.work-load-more{display:inline-flex;align-items:center;justify-content:space-between;gap:40px;min-height:48px;padding:12px 24px;border:1px solid var(--accent);border-radius:32px;color:var(--accent);font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.12em;transition:background .25s,color .25s}.work-load-more span{font-size:1.2rem}.work-load-more:hover{color:var(--bg);background:var(--accent)}.work-load-more:focus-visible{outline:2px solid var(--accent);outline-offset:5px}
         @media(min-width:901px){.work-brutal{font-size:clamp(5rem,min(12vw,15vh),12rem)}}
-        @media(max-width:900px){.work-load-more-wrap{justify-content:flex-start;padding-inline:20px;margin-top:24px}}
       `}</style>
     </section>
   );
