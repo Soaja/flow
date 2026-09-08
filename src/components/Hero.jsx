@@ -7,6 +7,7 @@ export default function Hero() {
 
   /* Lazy-load GSAP only for scroll parallax — never blocks initial paint */
   useEffect(() => {
+    if (window.matchMedia('(max-width: 1024px), (prefers-reduced-motion: reduce)').matches) return undefined;
     let ctx;
     const init = async () => {
       const { gsap }          = await import('gsap');
@@ -116,7 +117,7 @@ export default function Hero() {
         </div>
 
         {/* Scroll cue */}
-        <div style={{
+        <div className="hero-scroll-cue" style={{
           position: 'absolute', bottom: -60, left: '50%', transform: 'translateX(-50%)',
           display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
           fontSize: '.65rem', letterSpacing: '.14em', textTransform: 'uppercase',
@@ -154,7 +155,7 @@ export default function Hero() {
         @media (min-width:1025px) { #hero{padding-bottom:clamp(76px,14.8vh,160px)!important} #hero .container{padding-inline:var(--desktop-gutter)} }
         @media (min-width:1025px) and (max-height:820px) { #hero .hero-tag{margin-bottom:14px!important} #hero h1{margin-bottom:20px!important} #hero .hero-sub{margin-bottom:24px!important;font-size:.94rem!important} }
 
-        @media (max-width: 768px) { #hero { padding-bottom: 96px; } .hero-pulse{inset:-8% -45% -8% -42%;opacity:.14}.hero-pulse img{width:155%;height:112%} }
+        @media (max-width: 768px) { #hero { min-height:100svh!important;padding:112px 0 64px!important;justify-content:flex-end!important}#hero .container{width:100%;padding:0 20px}.hero-img-wrap{animation:none}.hero-img-wrap img{object-position:72% center!important}.hero-overlay{background:linear-gradient(180deg,rgba(18,20,18,.28) 0%,rgba(18,20,18,.64) 48%,rgba(18,20,18,.98) 100%),linear-gradient(90deg,rgba(18,20,18,.72),rgba(18,20,18,.1))!important}.hero-pulse{display:none}.hero-tag{margin-bottom:18px!important;font-size:.62rem!important;letter-spacing:.13em!important}.hero-tag span{width:18px!important}#hero h1{max-width:100%;margin-bottom:18px!important;font-size:clamp(3.35rem,17vw,5.25rem)!important;line-height:.88!important;letter-spacing:-.055em!important}#hero .hero-sub{margin-bottom:28px!important;font-size:.95rem!important;line-height:1.5!important;transform:none!important}.hero-actions{transform:none!important;gap:10px!important}.hero-actions a{min-height:50px}.hero-scroll-cue{display:none!important} }
       `}</style>
     </section>
   );

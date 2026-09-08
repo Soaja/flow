@@ -26,6 +26,18 @@ export default function Nav() {
     return () => { window.clearTimeout(timer); observer?.disconnect(); };
   }, []);
 
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKeyDown = (event) => { if (event.key === 'Escape') setMenuOpen(false); };
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [menuOpen]);
+
   const close = () => setMenuOpen(false);
   const navigateTo = (event, href) => {
     const target = document.querySelector(href);
@@ -33,6 +45,12 @@ export default function Nav() {
     event.preventDefault();
     close();
     if (animationRef.current) cancelAnimationFrame(animationRef.current);
+
+    if (window.matchMedia('(max-width: 1024px)').matches) {
+      target.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+      window.history.replaceState(null, '', href);
+      return;
+    }
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       target.scrollIntoView();
@@ -81,17 +99,20 @@ export default function Nav() {
         </nav>
       </header>
 
-      <header className="mobile-header">
-        <a href="#hero" aria-label="FLOW home"><img src="/flow-logo.svg" alt="FLOW" /></a>
-        <button className="menu-trigger" onClick={() => setMenuOpen(open => !open)} aria-label="Toggle menu" aria-expanded={menuOpen}>
-          <span /><span />
+      <header className={`mobile-header${menuOpen ? ' menu-open' : ''}`}>
+        <a href="#hero" aria-label="FLOW home" onClick={(event) => navigateTo(event, '#hero')}><img src="/flow-logo.svg" alt="FLOW" /></a>
+        <button className="menu-trigger" onClick={() => setMenuOpen(open => !open)} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} aria-controls="mobile-navigation">
+          <span /><span /><span />
         </button>
       </header>
 
-      <div className={`mobile-menu${menuOpen ? ' open' : ''}`}>
+      <div id="mobile-navigation" className={`mobile-menu${menuOpen ? ' open' : ''}`} aria-hidden={!menuOpen}>
+        <img className="mobile-menu-symbol" src="/flow-symbol.svg" alt="" aria-hidden="true" />
+        <p className="mobile-menu-eyebrow">Navigate the flow</p>
         {links.map((link, index) => (
-          <a key={link.href} href={link.href} onClick={(event) => navigateTo(event, link.href)}><small>0{index + 1}</small>{link.label}</a>
+          <a key={link.href} className={active === link.href.slice(1) ? 'active' : ''} href={link.href} onClick={(event) => navigateTo(event, link.href)}><small>0{index + 1}</small><span>{link.label}</span></a>
         ))}
+        <p className="mobile-menu-footer">Belgrade — Europe — Worldwide</p>
       </div>
     </>
   );

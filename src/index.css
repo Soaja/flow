@@ -565,3 +565,39 @@ img { display: block; max-width: 100%; }
   /* Work number col tighter */
   .work-item { grid-template-columns: 28px 1fr 36px !important; }
 }
+
+/* Mobile experience: native scrolling, lightweight motion and immersive menu */
+@media (max-width: 1024px) {
+  html { scroll-snap-type: none; scroll-behavior: smooth; overscroll-behavior-y: auto; }
+  body { overflow-x: clip; }
+  main > section { height: auto; min-height: 100svh; scroll-snap-align: none; scroll-snap-stop: normal; }
+
+  .mobile-header { height:76px; padding:0 18px; background:linear-gradient(180deg,rgba(9,10,9,.92),rgba(9,10,9,.55) 72%,transparent); transition:background .28s ease; }
+  .mobile-header.menu-open { background:transparent; }
+  .mobile-header > a { position:relative; z-index:2; display:grid; place-items:center; width:108px; height:48px; }
+  .mobile-header img { width:96px; }
+  .menu-trigger { position:relative; z-index:2; width:48px; height:48px; border:1px solid rgba(231,233,234,.18); border-radius:50%; background:rgba(12,14,12,.52); backdrop-filter:blur(10px); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; transition:border-color .25s,background .25s,transform .25s; }
+  .menu-trigger span { width:20px; height:1px; background:var(--accent); transform-origin:center; transition:transform .36s var(--ease),opacity .2s,width .3s; }
+  .mobile-header.menu-open .menu-trigger { border-color:rgba(202,219,46,.5); background:rgba(202,219,46,.08); transform:rotate(90deg); }
+  .mobile-header.menu-open .menu-trigger span:nth-child(1) { transform:translateY(6px) rotate(45deg); }
+  .mobile-header.menu-open .menu-trigger span:nth-child(2) { opacity:0; width:0; }
+  .mobile-header.menu-open .menu-trigger span:nth-child(3) { transform:translateY(-6px) rotate(-45deg); }
+
+  .mobile-menu { inset:0; z-index:505; padding:112px 24px 34px; overflow:hidden; justify-content:flex-start; background:linear-gradient(145deg,#0b0d0b 0%,#171a16 62%,#101210 100%); opacity:0; visibility:hidden; transform:translate3d(0,-100%,0); transition:transform .58s cubic-bezier(.76,0,.24,1),opacity .32s ease,visibility 0s linear .58s; }
+  .mobile-menu.open { opacity:1; visibility:visible; transform:translate3d(0,0,0); transition-delay:0s; }
+  .mobile-menu::before { content:''; position:absolute; inset:0; background-image:linear-gradient(rgba(231,233,234,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(231,233,234,.035) 1px,transparent 1px); background-size:54px 54px; mask-image:linear-gradient(to bottom,#000,transparent 90%); pointer-events:none; }
+  .mobile-menu-symbol { position:absolute; right:-42%; bottom:-6%; width:130%; max-width:none; opacity:.055; filter:drop-shadow(0 0 24px rgba(202,219,46,.2)); pointer-events:none; }
+  .mobile-menu-eyebrow { position:relative; margin-bottom:18px; padding-left:34px; font-size:.62rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); }
+  .mobile-menu-eyebrow::before { content:''; position:absolute; left:0; top:50%; width:24px; height:1px; background:var(--accent); }
+  .mobile-menu a { position:relative; z-index:1; min-height:68px; padding:10px 0; gap:15px; border-bottom:1px solid rgba(231,233,234,.11); color:rgba(231,233,234,.5); font-size:clamp(2.25rem,11.5vw,4.8rem); line-height:.92; transition:color .25s,padding-left .3s var(--ease); }
+  .mobile-menu a small { width:22px; flex:0 0 22px; font-size:.58rem; color:var(--accent); }
+  .mobile-menu a.active { color:var(--fg); padding-left:8px; }
+  .mobile-menu a.active::after { content:''; position:absolute; right:0; top:50%; width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 15px rgba(202,219,46,.7); }
+  .mobile-menu-footer { position:absolute; left:24px; bottom:30px; font-size:.52rem; font-weight:700; letter-spacing:.15em; text-transform:uppercase; color:rgba(231,233,234,.38); }
+}
+
+@media (max-width: 768px) {
+  .social-rail { display:none; }
+  #hero, #manifesto, #media, #contact { padding-left:0!important; padding-right:0!important; }
+  .card-img, .aimg, .strip-img { will-change:auto; }
+}

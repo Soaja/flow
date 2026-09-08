@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGsapIdle } from '../utils/useGsap';
@@ -33,7 +33,23 @@ const moments = [
 
 export default function Manifesto() {
   const sectionRef = useRef(null);
+  const [activeMoment, setActiveMoment] = useState(null);
+  useEffect(() => {
+    if (!activeMoment) return undefined;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const closeOnEscape = (event) => { if (event.key === 'Escape') setActiveMoment(null); };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [activeMoment]);
+  const openMoment = (videoSrc, label, src, number) => {
+    if (videoSrc && window.matchMedia('(max-width: 760px)').matches) setActiveMoment({ videoSrc, label, src, number });
+  };
   const playMoment = (event) => {
+    if (window.matchMedia('(max-width: 760px)').matches) return;
     const video = event.currentTarget.querySelector('.moment-portrait-preview video');
     if (video) {
       video.muted = false;
@@ -49,6 +65,7 @@ export default function Manifesto() {
     }
   };
   useGsapIdle(() => {
+    if (window.matchMedia('(max-width: 760px), (prefers-reduced-motion: reduce)').matches) return undefined;
     const ctx = gsap.context(() => {
       gsap.from('.about-main-copy > *', { y: 34, opacity: 0, stagger: .07, duration: .72, ease: 'power3.out', scrollTrigger: { trigger: sectionRef.current, start: 'top 60%' } });
       gsap.from('.service-chip', { y: 18, opacity: 0, stagger: .045, duration: .5, ease: 'power3.out', scrollTrigger: { trigger: '.service-cloud', start: 'top 82%' } });
@@ -88,9 +105,9 @@ export default function Manifesto() {
         <div className="moments-title" aria-label="Moments from the field" />
         <div className="moments-list">
           {moments.map(([src, label, videoSrc, number, merged]) => (
-            <figure key={src} className={merged ? 'moment-merged' : (!videoSrc ? 'moment-static' : '')} tabIndex={videoSrc ? '0' : undefined} onMouseEnter={playMoment} onMouseLeave={stopMoment} onFocus={playMoment} onBlur={stopMoment}>
+            <figure key={src} className={merged ? 'moment-merged' : (!videoSrc ? 'moment-static' : '')} tabIndex={videoSrc ? '0' : undefined} role={videoSrc ? 'button' : undefined} aria-label={videoSrc ? `Play ${label} video` : undefined} onClick={() => openMoment(videoSrc, label, src, number)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openMoment(videoSrc, label, src, number); } }} onMouseEnter={playMoment} onMouseLeave={stopMoment} onFocus={playMoment} onBlur={stopMoment}>
               {videoSrc
-                ? <video className="moment-cover-video" src={videoSrc} aria-label={label} preload="auto" muted playsInline />
+                ? <video className="moment-cover-video" src={videoSrc} aria-label={label} preload="metadata" muted playsInline />
                 : <img src={src} alt={label} loading="lazy" />}
               {videoSrc && <span className="moment-cover-cta" aria-hidden="true">
                 <b>Play video</b>
@@ -98,7 +115,7 @@ export default function Manifesto() {
               </span>}
               {videoSrc && <div className="moment-portrait-preview" aria-hidden="true">
                 {videoSrc
-                  ? <video src={videoSrc} loop playsInline preload="auto" />
+                  ? <video src={videoSrc} loop playsInline preload="metadata" />
                   : <img src={src} alt="" loading="lazy" />}
                 {!videoSrc && <span className="moment-preview-play">▶</span>}
                 <small>{number} / {label}</small>
@@ -108,6 +125,16 @@ export default function Manifesto() {
           ))}
         </div>
       </div>
+
+      {activeMoment && <div className="moment-modal" role="dialog" aria-modal="true" aria-label={`${activeMoment.label} video`} onClick={() => setActiveMoment(null)}>
+        <div className="moment-modal-player" onClick={(event) => event.stopPropagation()}>
+          <button className="moment-modal-close" type="button" aria-label="Close video" onClick={() => setActiveMoment(null)}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
+          </button>
+          <video src={activeMoment.videoSrc} poster={activeMoment.src} autoPlay loop playsInline controls />
+          <div className="moment-modal-meta"><span>{activeMoment.number}</span><strong>{activeMoment.label}</strong></div>
+        </div>
+      </div>}
 
       <style>{`
         .moment-portrait-preview{pointer-events:auto!important}
@@ -135,6 +162,7 @@ export default function Manifesto() {
           .moments-list figure:hover .moment-portrait-preview,.moments-list figure:focus-visible .moment-portrait-preview{transform:translateY(-50%) scale(1)!important}
         }
         @media(max-width:760px){.moment-portrait-preview{display:none!important}}
+        .moment-modal{display:none}
         .about-screen{position:relative;display:flex;align-items:center;padding:clamp(28px,5.4vh,58px) clamp(28px,2.5vw,48px) clamp(118px,15.5vh,148px) var(--rail-width)!important;background:#1f211f;overflow:hidden;isolation:isolate}
         .about-photo{position:absolute;z-index:-4;inset:0 38% 0 0;background:url('/athlete-silhouette.webp') center/cover no-repeat;filter:grayscale(1) contrast(1.15);opacity:.32;transform:scale(1.04)}
         .about-screen::before{content:'';position:absolute;z-index:-3;inset:0;background:linear-gradient(90deg,rgba(31,33,31,.58) 0%,rgba(31,33,31,.82) 43%,#1f211f 67%),radial-gradient(circle at 25% 40%,rgba(202,219,46,.08),transparent 30%)}
@@ -170,7 +198,7 @@ export default function Manifesto() {
         @keyframes posterBeat{0%,100%{transform:scale(1)}8%{transform:scale(1.04)}16%{transform:scale(1)}24%{transform:scale(1.025)}34%{transform:scale(1)}}@keyframes posterRing{0%{transform:scale(.35);opacity:.8}48%,100%{transform:scale(2.2);opacity:0}}@keyframes aboutScan{0%,100%{opacity:0;translate:-22vw 0}20%,70%{opacity:.7}80%{opacity:0;translate:48vw 0}}
         @media(min-width:1025px) and (max-height:820px){.about-layout{padding-left:clamp(56px,7vw,108px)}.about-label{margin-bottom:14px}.about-intro{margin-top:14px}.about-description{margin-top:8px;line-height:1.5}.about-main-copy h3{margin-top:16px;font-size:.9rem}.service-cloud{margin-top:10px;gap:7px}.service-row{gap:7px}.service-chip{min-height:43px;padding:7px 14px;font-size:.75rem}.service-chip i{width:22px;height:22px;flex-basis:22px}.moments-title::before{top:26px}.moments-title::after{top:62px}}
         @media(max-width:1100px){.about-screen{height:auto!important;min-height:100dvh;padding:96px 24px 212px!important}.about-layout{grid-template-columns:1fr .58fr;gap:28px;transform:translateY(-24px)}.about-main-copy h2{font-size:clamp(2.5rem,5.3vw,4rem)}.service-chip{min-height:38px}.moments-dock{left:0}}
-        @media(max-width:760px){.about-screen{padding:96px 20px 0!important}.about-photo{inset:0;opacity:.18}.about-bg-symbol{width:110vw;left:-30%;bottom:40%;opacity:.025}.about-scan{display:none}.about-layout{grid-template-columns:1fr;gap:32px;transform:none}.about-description{font-size:.86rem}.flow-poster{max-width:430px;margin:auto}.moments-dock{position:relative;left:auto;right:auto;bottom:auto;width:calc(100% + 40px);height:150px;margin:42px -20px 0;grid-template-columns:130px 1fr}.moments-list{overflow-x:auto;display:flex}.moments-list figure{min-width:115px}}
+        @media(max-width:760px){.about-screen{padding:104px 20px 0!important;display:block;overflow:hidden}.about-photo{inset:0;opacity:.16}.about-bg-symbol{width:110vw;left:-30%;bottom:40%;opacity:.025}.about-scan{display:none}.about-layout{display:block;padding:0;transform:none}.about-main-copy{width:100%}.about-label{margin-bottom:20px}.about-main-copy h2{font-size:clamp(2.55rem,12vw,4rem);line-height:.92}.about-main-copy h2 strong br{display:none}.about-intro{margin-top:22px;font-size:1rem;line-height:1.25}.about-description{font-size:.92rem;line-height:1.65}.about-main-copy h3{margin-top:28px;font-size:1rem}.service-cloud{gap:8px}.service-row{display:contents}.service-chip{width:100%;min-height:50px;padding:9px 15px;font-size:.85rem;backdrop-filter:none}.service-chip i{width:24px;height:24px;flex-basis:24px}.moments-dock{position:relative;left:auto;right:auto;bottom:auto;width:calc(100% + 40px);height:auto;margin:48px -20px 0;display:block}.moments-title{height:116px;display:block}.moments-title::before{top:27px;left:20px}.moments-title::after{top:65px;left:21px}.moments-list{height:auto;overflow-x:auto;display:flex;scroll-snap-type:x proximity;scrollbar-width:none}.moments-list::-webkit-scrollbar{display:none}.moments-list figure{min-width:72vw;height:235px;scroll-snap-align:start;overflow:hidden}.moments-list .moment-merged{min-width:72vw}.moment-cover-cta{top:50%!important}.moment-cover-cta b{font-size:.58rem}.moment-cover-cta i{width:48px!important;height:48px!important}.moment-modal{position:fixed;z-index:800;inset:0;display:grid;place-items:center;padding:18px;background:rgba(5,6,5,.94);backdrop-filter:blur(12px);animation:modalFade .24s ease both}.moment-modal-player{position:relative;width:min(88vw,390px);max-height:92svh;aspect-ratio:9/16;overflow:hidden;background:#080908;border:1px solid rgba(202,219,46,.5);box-shadow:0 28px 90px rgba(0,0,0,.7);animation:modalIn .38s cubic-bezier(.22,.61,.36,1) both}.moment-modal-player video{width:100%;height:100%;display:block;object-fit:cover}.moment-modal-close{position:absolute;z-index:4;top:12px;right:12px;width:46px;height:46px;display:grid;place-items:center;border-radius:50%;background:rgba(8,9,8,.78);border:1px solid rgba(231,233,234,.25);color:var(--fg);backdrop-filter:blur(8px)}.moment-modal-close svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7}.moment-modal-meta{position:absolute;z-index:3;left:0;right:0;bottom:48px;display:flex;align-items:center;gap:10px;padding:24px 18px 16px;background:linear-gradient(transparent,rgba(0,0,0,.75));text-transform:uppercase}.moment-modal-meta span{font-size:.55rem;color:var(--accent)}.moment-modal-meta strong{font-family:var(--f-display);font-size:.78rem;letter-spacing:.1em}@keyframes modalFade{from{opacity:0}to{opacity:1}}@keyframes modalIn{from{opacity:0;transform:translateY(18px) scale(.96)}to{opacity:1;transform:none}}}
       `}</style>
     </section>
   );
