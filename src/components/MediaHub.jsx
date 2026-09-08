@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import './WorkPortal.css';
+import './WorkMore.css';
 import { projects, projectHref } from '../data/projects';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -67,18 +67,8 @@ export default function MediaHub() {
               </div>
             </a>
           ))}
-          <a href="/?page=work" className="flow-door" aria-label="Load more projects: enter Our Work">
-            <span className="flow-door-top"><span>FLOW / ACCESS</span><span aria-hidden="true">04</span></span>
-            <span className="flow-door-space" aria-hidden="true">
-              <span className="flow-door-depth"><i /><i /><i /><i /></span>
-              <img className="flow-door-symbol" src="/flow-symbol.svg" alt="" />
-              <span className="flow-door-panel flow-door-panel--left" /><span className="flow-door-panel flow-door-panel--right" />
-              <span className="flow-door-seam" />
-            </span>
-            <span className="flow-door-copy"><span className="flow-door-eyebrow">Step inside</span><span className="flow-door-title">LOAD<br />MORE<span className="flow-door-dot">.</span></span></span>
-            <span className="flow-door-bottom"><span>Enter the flow</span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.5" /></svg></span>
-          </a>
         </div>
+        <div className="work-more-row"><a href="/?page=work" className="work-more-link">Load more <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.5" /></svg></a></div>
       </div>
       <h2 className="work-brutal"><span>Our</span><span>Work</span></h2>
       <style>{`
