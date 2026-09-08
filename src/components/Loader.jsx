@@ -1,87 +1,67 @@
 import { useEffect, useState } from 'react';
 
-/* Pre-compute wave paths once at module load — no runtime cost */
-function makePath(amp, freq, phase, w = 1000) {
-  let d = '';
-  for (let x = 0; x <= w; x += 7) {
-    const y = 200 + amp * Math.sin(freq * x + phase);
-    d += x === 0 ? `M${x},${y}` : ` L${x},${y}`;
-  }
-  return d;
-}
-
-const W1 = makePath(52, 0.018, 0);
-const W2 = makePath(32, 0.014, Math.PI * 0.4);
-const W3 = makePath(68, 0.011, Math.PI * 0.8);
-
 export default function Loader({ onComplete }) {
-  const [visible, setVisible] = useState(true);
+  const [exiting, setExiting] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => {
-      setVisible(false);
-      setTimeout(onComplete, 450);
-    }, 1300);
-    return () => clearTimeout(t);
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const revealDelay = reducedMotion ? 450 : 1850;
+    const exitDuration = reducedMotion ? 180 : 650;
+    let completeTimer;
+    const revealTimer = setTimeout(() => {
+      setExiting(true);
+      completeTimer = setTimeout(onComplete, exitDuration);
+    }, revealDelay);
+    return () => {
+      clearTimeout(revealTimer);
+      clearTimeout(completeTimer);
+    };
   }, [onComplete]);
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 9999,
-      background: '#1f211f',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      opacity: visible ? 1 : 0,
-      transition: 'opacity .5s cubic-bezier(.22,.61,.36,1)',
-      pointerEvents: visible ? 'all' : 'none',
-      overflow: 'hidden',
-    }}>
+    <div className={`flow-loader${exiting ? ' is-exiting' : ''}`} role="status" aria-label="Loading FLOW">
+      <div className="loader-grid" aria-hidden="true" />
+      <div className="loader-glow" aria-hidden="true" />
+      <div className="loader-meta loader-meta-left"><span>00</span> Loading</div>
+      <div className="loader-meta loader-meta-right">Belgrade — Europe — Worldwide</div>
 
-      {/* Waves — draw-in via stroke-dashoffset */}
-      <svg
-        aria-hidden="true"
-        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
-        viewBox="0 0 1000 400"
-        preserveAspectRatio="xMidYMid slice"
-      >
-        <path className="lw1" d={W1} stroke="#cadb2e" strokeWidth="2.5"  fill="none" opacity=".85" strokeDasharray="1300" strokeDashoffset="1300"/>
-        <path className="lw2" d={W2} stroke="#cadb2e" strokeWidth="1.2"  fill="none" opacity=".4"  strokeDasharray="1150" strokeDashoffset="1150"/>
-        <path className="lw3" d={W3} stroke="#cadb2e" strokeWidth="1.5"  fill="none" opacity=".2"  strokeDasharray="1400" strokeDashoffset="1400"/>
-      </svg>
-
-      {/* Logo + tagline */}
-      <div style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
-        <div className="l-logo">
-          <svg
-            viewBox="0 0 1920 451.78"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            style={{ width: 'min(300px, 68vw)', display: 'block' }}
-          >
-            <path fill="#e6e7e7" d="M220.12,196.33h170.14c11.37,0,17.75,13.09,10.74,22.04l-30.62,39.16c-3.94,5.04-9.99,7.99-16.39,7.99h-133.88c-7.53,0-13.64,6.11-13.64,13.64v73.36c0,7.53-6.11,13.64-13.64,13.64h-59.52c-7.53,0-13.64-6.11-13.64-13.64V99.26c0-7.53,6.11-13.64,13.64-13.64h273.26c11.3,0,17.7,12.95,10.84,21.92l-31.84,41.66c-4.52,5.91-11.54,9.38-18.98,9.38h-146.47c-7.53,0-13.64,6.11-13.64,13.64v10.46c0,7.53,6.11,13.64,13.64,13.64Z"/>
-            <path fill="#e6e7e7" d="M490.19,352.51V99.26c0-7.53,6.11-13.64,13.64-13.64h59.53c7.53,0,13.64,6.11,13.64,13.64v180.29c0,7.53,6.11,13.64,13.64,13.64h175.98c11.3,0,17.7,12.95,10.84,21.92l-31.57,41.3c-4.69,6.14-11.98,9.74-19.71,9.74h-222.34c-7.53,0-13.64-6.11-13.64-13.64Z"/>
-            <path fill="#cadb2e" d="M1249.97,225.68c0,98.12-66.26,145.08-205.47,145.08s-204.63-46.54-204.63-145.08,65.42-144.67,204.63-144.67,205.47,46.54,205.47,144.67ZM926.25,225.68c0,57.03,25.16,72.12,118.25,72.12s118.67-15.1,118.67-72.12-24.32-71.71-118.67-71.71-118.25,15.1-118.25,71.71Z"/>
-            <path fill="#e6e7e7" d="M1377.89,95.64l34.22,124.14c3.28,11.91,19.44,13.67,25.21,2.75l58.15-110.06c13-23.48,26.42-31.45,52.42-31.45s38.57,7.97,51.16,31.45l57.45,110.31c5.71,10.97,21.9,9.28,25.23-2.62l34.87-124.56c1.65-5.89,7.02-9.96,13.13-9.96h56.93c9.12,0,15.67,8.77,13.08,17.52l-67.77,228.63c-7.55,24.74-25.58,39-49.9,39-20.13,0-36.07-10.06-46.55-29.35l-77.31-147.74c-5.09-9.72-18.99-9.76-24.13-.07l-78.44,147.81c-10.48,19.29-26.42,29.35-46.96,29.35-24.32,0-42.35-14.26-49.48-39l-65.85-228.73c-2.51-8.72,4.03-17.41,13.11-17.41h58.29c6.14,0,11.52,4.1,13.15,10.01Z"/>
-          </svg>
-        </div>
-        <p className="l-tag" style={{
-          fontFamily: 'sans-serif', fontSize: 11, fontWeight: 600,
-          letterSpacing: '0.24em', color: '#9a9b9a',
-          textTransform: 'uppercase', marginTop: 18,
-        }}>
-          Sport. Redefined.
-        </p>
+      <div className="loader-signal" aria-hidden="true">
+        <img src="/flow-symbol.svg" alt="" />
+        <i />
       </div>
 
-      <style>{`
-        .lw1 { animation: waveDraw .9s cubic-bezier(.25,1,.5,1) .08s both; }
-        .lw2 { animation: waveDraw .9s cubic-bezier(.25,1,.5,1) .18s both; }
-        .lw3 { animation: waveDraw .9s cubic-bezier(.25,1,.5,1) .03s both; }
-        @keyframes waveDraw { to { stroke-dashoffset: 0; } }
+      <div className="loader-identity">
+        <span className="loader-logo-frame">
+          <img src="/flow-logo.svg" alt="FLOW" width="1920" height="452" />
+        </span>
+        <p>Future communication of sports.</p>
+      </div>
 
-        .l-logo { opacity: 0; animation: lIn .6s cubic-bezier(.34,1.56,.64,1) .08s both; }
-        .l-tag  { opacity: 0; animation: lTag .4s ease .32s both; }
-        @keyframes lIn  { from { opacity:0; transform:scale(.88) translateY(16px); } to { opacity:1; transform:none; } }
-        @keyframes lTag { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+      <div className="loader-progress" aria-hidden="true"><i /></div>
+      <div className="loader-index" aria-hidden="true"><span>F</span><span>L</span><span>O</span><span>W</span></div>
+
+      <style>{`
+        .flow-loader{position:fixed;z-index:9999;inset:0;overflow:hidden;background:#191b19;color:#e7e9e8;isolation:isolate;contain:strict;transform:translate3d(0,0,0);backface-visibility:hidden;will-change:transform,opacity;transition:transform .62s cubic-bezier(.76,0,.24,1),opacity .42s ease,visibility 0s linear .62s}
+        .flow-loader.is-exiting{transform:translate3d(0,-100%,0);opacity:.98;visibility:hidden}
+        .loader-grid{position:absolute;z-index:-2;inset:0;background-image:linear-gradient(rgba(231,233,234,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(231,233,234,.028) 1px,transparent 1px);background-size:clamp(54px,5vw,86px) clamp(54px,5vw,86px);mask-image:radial-gradient(circle at center,#000,transparent 78%)}
+        .loader-glow{position:absolute;z-index:-1;left:50%;top:50%;width:min(72vw,1100px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(202,219,46,.1),rgba(202,219,46,.02) 38%,transparent 68%);transform:translate3d(-50%,-50%,0);will-change:transform,opacity;animation:loaderGlow 1.5s cubic-bezier(.22,.61,.36,1) both}
+        .loader-meta{position:absolute;top:clamp(26px,4vw,54px);font-family:var(--f-display);font-size:clamp(.52rem,.58vw,.66rem);font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(231,233,234,.48);opacity:0;animation:loaderMeta .5s ease .2s forwards}.loader-meta-left{left:clamp(24px,3vw,58px)}.loader-meta-left span{margin-right:11px;color:var(--accent)}.loader-meta-right{right:clamp(24px,3vw,58px)}
+        .loader-signal{position:absolute;z-index:0;inset:-16% -12%;display:grid;place-items:center;overflow:hidden;opacity:.17;transform:translate3d(0,0,0)}.loader-signal img{width:124%;height:124%;max-width:none;object-fit:contain;opacity:0;transform:translate3d(-1.5%,0,0) scale(.985);will-change:transform,opacity;animation:loaderSignal 1.25s cubic-bezier(.22,.61,.36,1) .08s forwards}.loader-signal i{position:absolute;top:7%;bottom:7%;left:50%;width:1px;background:linear-gradient(transparent,rgba(202,219,46,.3),var(--accent),rgba(202,219,46,.3),transparent);box-shadow:0 0 14px rgba(202,219,46,.55);opacity:0;transform:translate3d(-115vw,0,0);will-change:transform,opacity;animation:loaderScan 1.3s cubic-bezier(.55,0,.18,1) .08s forwards}
+        .loader-identity{position:absolute;z-index:2;left:50%;top:50%;width:min(420px,64vw);text-align:center;transform:translate(-50%,-50%)}
+        .loader-logo-frame{display:block;overflow:hidden}.loader-logo-frame img{display:block;width:100%;height:auto;opacity:0;transform:translateY(108%);filter:drop-shadow(0 0 26px rgba(202,219,46,.16));animation:loaderLogo .72s cubic-bezier(.22,.61,.36,1) .34s forwards}
+        .loader-identity p{margin-top:19px;font-family:var(--f-body);font-size:clamp(.56rem,.66vw,.72rem);font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:rgba(231,233,234,.57);opacity:0;transform:translateY(8px);animation:loaderTag .5s ease .76s forwards}
+        .loader-progress{position:absolute;z-index:3;left:clamp(24px,3vw,58px);right:clamp(24px,3vw,58px);bottom:clamp(28px,4vw,56px);height:1px;background:rgba(231,233,234,.1);overflow:hidden}.loader-progress i{display:block;width:100%;height:100%;background:var(--accent);transform:scaleX(0);transform-origin:left;box-shadow:0 0 14px rgba(202,219,46,.65);animation:loaderProgress 1.65s cubic-bezier(.22,.61,.36,1) .12s forwards}
+        .loader-index{position:absolute;right:clamp(24px,3vw,58px);bottom:calc(clamp(28px,4vw,56px) + 14px);display:flex;gap:9px;font-family:var(--f-display);font-size:.5rem;font-weight:700;letter-spacing:.08em;color:rgba(231,233,234,.25)}.loader-index span{animation:indexFlash 1.2s ease both}.loader-index span:nth-child(2){animation-delay:.12s}.loader-index span:nth-child(3){animation-delay:.24s;color:var(--accent)}.loader-index span:nth-child(4){animation-delay:.36s}
+        @keyframes loaderSignal{0%{opacity:0;transform:translate3d(-1.5%,0,0) scale(.985)}22%{opacity:.42}100%{opacity:1;transform:translate3d(0,0,0) scale(1)}}
+        @keyframes loaderScan{0%,5%{opacity:0;transform:translate3d(-115vw,0,0)}12%{opacity:1}82%{opacity:1;transform:translate3d(115vw,0,0)}100%{opacity:0;transform:translate3d(115vw,0,0)}}
+        @keyframes loaderLogo{to{opacity:1;transform:none}}
+        @keyframes loaderTag{to{opacity:1;transform:none}}
+        @keyframes loaderProgress{to{transform:scaleX(1)}}
+        @keyframes loaderMeta{to{opacity:1}}
+        @keyframes loaderGlow{0%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.8)}100%{opacity:1;transform:translate3d(-50%,-50%,0) scale(1)}}
+        @keyframes indexFlash{0%,100%{opacity:.28}45%{opacity:1;color:var(--accent)}}
+        @media(max-width:700px){.loader-meta-right{display:none}.loader-signal{inset:-3% -70%;opacity:.14}.loader-identity{width:min(300px,62vw)}}
+        @media(prefers-reduced-motion:reduce){.flow-loader{transition-duration:.18s}.loader-signal img,.loader-signal i,.loader-glow,.loader-logo-frame img,.loader-identity p,.loader-progress i,.loader-meta,.loader-index span{animation:none!important;opacity:1;transform:none;clip-path:none}.loader-signal i{display:none}}
       `}</style>
     </div>
   );
