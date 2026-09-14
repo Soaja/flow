@@ -13,7 +13,7 @@ const manifest = JSON.parse(await readFile('dist/.vite/manifest.json', 'utf8'));
 const escape = value => String(value).replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
 
 const pages = [
-  { path: '/', file: 'index.html', components: ['MediaHub'] },
+  { path: '/', file: 'index.html', components: ['Manifesto', 'MediaHub'] },
   { path: '/?page=work', file: '_pages/work.html', components: ['WorkPage'], className: 'work-archive-document' },
   ...projects.map(project => ({ path: projectHref(project), file: `_pages/projects/${project.slug}.html`, components: ['ProjectPage'], className: 'project-document' })),
   { path: '/?project=not-found', file: '_pages/not-found.html', components: [], notFound: true },

@@ -513,7 +513,7 @@ img { display: block; max-width: 100%; }
   .social-rail { display:none; }
 
   /* Sections — tighter vertical rhythm on mobile */
-  #manifesto, #divisions, #stats, #media, #athletes, #work, #newsletter, #contact {
+  #divisions, #stats, #athletes, #work, #newsletter {
     padding: 80px 0 !important;
   }
 
@@ -608,6 +608,21 @@ img { display: block; max-width: 100%; }
 
 @media (max-width: 768px) {
   .social-rail { display:none; }
-  #hero, #manifesto, #media, #contact { padding-left:0!important; padding-right:0!important; }
+  #hero, #media { padding-left:0!important; padding-right:0!important; }
   .card-img, .aimg, .strip-img { will-change:auto; }
+}
+
+/* Shared mobile gutters, including landscape safe areas. */
+@media (max-width: 1024px) {
+  :root { --mobile-gutter: clamp(24px, 6vw, 36px); --page-left: max(var(--mobile-gutter), env(safe-area-inset-left)); --page-right: max(var(--mobile-gutter), env(safe-area-inset-right)); }
+  body .mobile-header, body .mobile-menu { padding-left: var(--page-left); padding-right: var(--page-right); }
+  body .mobile-menu-footer { left: var(--page-left); right: var(--page-right); }
+  main #hero .container { padding-left: var(--page-left); padding-right: var(--page-right); }
+  #media .media-cards-grid { padding-left: var(--page-left); padding-right: var(--page-right); scroll-padding-left: var(--page-left); }
+  #media .work-brutal { padding-left: var(--page-left); padding-right: var(--page-right); }
+  #contact.contact-scene { padding: 104px var(--page-right) 0 var(--page-left) !important; }
+  #contact .contact-map-side h2 { font-size: clamp(2.6rem, 11vw, 5.4rem); line-height: .98; }
+  #contact .contact-footer { width: calc(100% + var(--page-left) + var(--page-right)); margin-left: calc(-1 * var(--page-left)); margin-right: calc(-1 * var(--page-right)); padding-left: var(--page-left); padding-right: var(--page-right); }
+  main .work-archive { padding-left: var(--page-left); padding-right: var(--page-right); }
+  main .project-container { padding-left: var(--page-left); padding-right: var(--page-right); }
 }

@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import './ManifestoMobile.css';
 import { loadGsap } from '../utils/loadGsap';
 import { useGsapIdle } from '../utils/useGsap';
 import { useVisibleMotion } from '../utils/useVisibleMotion';
@@ -34,6 +36,23 @@ export default function Manifesto() {
   const sectionRef = useRef(null);
   useVisibleMotion(sectionRef);
   const [activeMoment, setActiveMoment] = useState(null);
+  const momentsRef = useRef(null);
+  const closeRef = useRef(null);
+  const triggerRef = useRef(null);
+  const [momentIndex, setMomentIndex] = useState(0);
+  const updateMomentIndex = () => {
+    const list = momentsRef.current;
+    const card = list?.firstElementChild;
+    if (!card) return;
+    const stride = card.getBoundingClientRect().width + 12;
+    setMomentIndex(Math.min(moments.length - 1, Math.max(0, Math.round(list.scrollLeft / stride))));
+  };
+  const moveMoment = (direction) => {
+    const list = momentsRef.current;
+    const card = list?.firstElementChild;
+    if (!card) return;
+    list.scrollBy({ left: direction * (card.getBoundingClientRect().width + 12), behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+  };
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) return;
@@ -48,20 +67,42 @@ export default function Manifesto() {
   }, []);
   useEffect(() => {
     if (!activeMoment) return undefined;
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    const closeOnEscape = (event) => { if (event.key === 'Escape') setActiveMoment(null); };
+    const scrollY = window.scrollY;
+    const body = document.body;
+    const previous = { overflow: body.style.overflow, position: body.style.position, top: body.style.top, width: body.style.width };
+    Object.assign(body.style, { overflow: 'hidden', position: 'fixed', top: `-${scrollY}px`, width: '100%' });
+    const main = document.getElementById('root');
+    const previousInert = main?.inert;
+    if (main) main.inert = true;
+    closeRef.current?.focus({ preventScroll: true });
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setActiveMoment(null);
+      if (event.key === 'Tab') {
+        const dialog = closeRef.current?.closest('[role="dialog"]');
+        const controls = [...(dialog?.querySelectorAll('button, video[controls]') || [])];
+        const first = controls[0];
+        const last = controls.at(-1);
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }
+    };
     window.addEventListener('keydown', closeOnEscape);
     return () => {
-      document.body.style.overflow = previous;
+      Object.assign(body.style, previous);
+      if (main) main.inert = previousInert;
+      window.scrollTo({ top: scrollY, behavior: 'instant' });
+      triggerRef.current?.focus({ preventScroll: true });
       window.removeEventListener('keydown', closeOnEscape);
     };
   }, [activeMoment]);
-  const openMoment = (videoSrc, label, src, number) => {
-    if (videoSrc && window.matchMedia('(max-width: 760px)').matches) setActiveMoment({ videoSrc, label, src, number });
+  const openMoment = (event, videoSrc, label, src, number) => {
+    if (videoSrc && window.matchMedia('(max-width: 1024px)').matches) {
+      triggerRef.current = event.currentTarget;
+      setActiveMoment({ videoSrc, label, src, number });
+    }
   };
   const playMoment = (event) => {
-    if (window.matchMedia('(max-width: 760px)').matches) return;
+    if (window.matchMedia('(max-width: 1024px)').matches) return;
     const video = event.currentTarget.querySelector('.moment-portrait-preview video');
     if (video) {
       if (!video.getAttribute('src')) video.src = video.dataset.src;
@@ -118,9 +159,17 @@ export default function Manifesto() {
 
       <div className="moments-dock">
         <div className="moments-title" aria-label="Moments from the field" />
-        <div className="moments-list">
+        <div className="moments-mobile-toolbar">
+          <p>Swipe to explore · Tap to play</p>
+          <div className="moments-mobile-controls">
+            <button type="button" aria-label="Previous moment" aria-controls="moments-track" disabled={momentIndex === 0} onClick={() => moveMoment(-1)}>←</button>
+            <span aria-live="polite">{String(momentIndex + 1).padStart(2, '0')} / {String(moments.length).padStart(2, '0')}</span>
+            <button type="button" aria-label="Next moment" aria-controls="moments-track" disabled={momentIndex === moments.length - 1} onClick={() => moveMoment(1)}>→</button>
+          </div>
+        </div>
+        <div id="moments-track" className="moments-list" ref={momentsRef} onScroll={updateMomentIndex} role="region" aria-label="Moments from the field">
           {moments.map(([src, label, videoSrc, number, merged]) => (
-            <figure key={src} className={merged ? 'moment-merged' : (!videoSrc ? 'moment-static' : '')} tabIndex={videoSrc ? '0' : undefined} role={videoSrc ? 'button' : undefined} aria-label={videoSrc ? `Play ${label} video` : undefined} onClick={() => openMoment(videoSrc, label, src, number)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openMoment(videoSrc, label, src, number); } }} onMouseEnter={playMoment} onMouseLeave={stopMoment} onFocus={playMoment} onBlur={stopMoment}>
+            <figure key={src} className={merged ? 'moment-merged' : (!videoSrc ? 'moment-static' : '')} tabIndex={videoSrc ? '0' : undefined} role={videoSrc ? 'button' : undefined} aria-label={videoSrc ? `Play ${label} video` : undefined} onClick={(event) => openMoment(event, videoSrc, label, src, number)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openMoment(event, videoSrc, label, src, number); } }} onMouseEnter={playMoment} onMouseLeave={stopMoment} onFocus={playMoment} onBlur={stopMoment}>
               {videoSrc
                 ? <video className="moment-cover-video" data-src={videoSrc} aria-label={label} preload="metadata" muted playsInline />
                 : <img src={src} alt={label} loading="lazy" />}
@@ -141,15 +190,15 @@ export default function Manifesto() {
         </div>
       </div>
 
-      {activeMoment && <div className="moment-modal" role="dialog" aria-modal="true" aria-label={`${activeMoment.label} video`} onClick={() => setActiveMoment(null)}>
+      {activeMoment && createPortal(<div className="moment-modal" role="dialog" aria-modal="true" aria-label={`${activeMoment.label} video`} onClick={() => setActiveMoment(null)}>
         <div className="moment-modal-player" onClick={(event) => event.stopPropagation()}>
-          <button className="moment-modal-close" type="button" aria-label="Close video" onClick={() => setActiveMoment(null)}>
+          <button ref={closeRef} className="moment-modal-close" type="button" aria-label="Close video" onClick={() => setActiveMoment(null)}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
           </button>
-          <video src={activeMoment.videoSrc} poster={activeMoment.src} autoPlay loop playsInline controls />
+          <video src={activeMoment.videoSrc} poster={activeMoment.src} autoPlay loop playsInline controls tabIndex={0} />
           <div className="moment-modal-meta"><span>{activeMoment.number}</span><strong>{activeMoment.label}</strong></div>
         </div>
-      </div>}
+      </div>, document.body)}
 
       <style>{`
         .moment-portrait-preview{pointer-events:auto!important}

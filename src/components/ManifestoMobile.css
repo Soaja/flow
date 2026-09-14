@@ -1,0 +1,62 @@
+.moments-mobile-toolbar { display: none; }
+
+@media (max-width: 1024px) {
+  #manifesto.about-screen { padding: 104px var(--page-right) 48px var(--page-left) !important; display: block; height: auto !important; }
+  #manifesto .about-layout { padding: 0; transform: none; }
+  #manifesto .about-main-copy { width: 100%; max-width: 680px; margin-inline: auto; }
+  #manifesto .about-main-copy h2 { font-size: clamp(2.35rem, 9.5vw, 4.5rem); line-height: 1; overflow-wrap: break-word; }
+  #manifesto .about-main-copy h2 strong br { display: none; }
+  #manifesto .about-main-copy h2 span { margin-top: 16px; }
+  #manifesto .about-label { margin-bottom: 24px; }
+  #manifesto .about-intro { margin-top: 26px; line-height: 1.4; }
+  #manifesto .about-description { margin-top: 16px; font-size: 1rem; line-height: 1.75; }
+  #manifesto .about-main-copy h3 { margin-top: 32px; font-size: .95rem; line-height: 1.5; }
+  #manifesto .service-cloud { margin-top: 18px; gap: 10px; }
+  #manifesto .service-row { display: contents; }
+  #manifesto .service-chip { width: 100%; min-height: 54px; padding: 12px 16px; font-size: .875rem; line-height: 1.4; backdrop-filter: none; }
+  #manifesto .service-chip i { flex: 0 0 24px; }
+  #manifesto .moments-dock { position: relative; inset: auto; width: 100%; height: auto; margin: 48px auto 0; display: block; max-width: 680px; background: transparent; border-top: 1px solid var(--border-h); }
+  #manifesto .moments-title { height: 108px; border: 0; background: transparent; }
+  #manifesto .moments-title::before { top: 28px; left: 0; font-size: 1.75rem; color: var(--accent); }
+  #manifesto .moments-title::after { top: 65px; left: 1px; color: var(--fg-muted); }
+  #manifesto .moments-mobile-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+  #manifesto .moments-mobile-toolbar p { max-width: 145px; font-size: .75rem; line-height: 1.5; color: var(--fg-muted); }
+  #manifesto .moments-mobile-controls { display: flex; align-items: center; gap: 8px; }
+  #manifesto .moments-mobile-controls button { display: grid; place-items: center; width: 44px; height: 44px; flex: 0 0 44px; border: 1px solid var(--border-h); border-radius: 50%; background: transparent; color: var(--accent); font-size: 1.25rem; }
+  #manifesto .moments-mobile-controls button:disabled { opacity: .3; cursor: default; }
+  #manifesto .moments-mobile-controls span { font-size: .65rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  #manifesto .moments-list { display: flex; gap: 12px; height: auto; padding: 2px 2px 14px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: 2px; scrollbar-width: thin; scrollbar-color: var(--accent) transparent; }
+  #manifesto .moments-list::-webkit-scrollbar { display: block; height: 3px; }
+  #manifesto .moments-list::-webkit-scrollbar-thumb { background: var(--accent); }
+  #manifesto .moments-list figure { flex: 0 0 min(82%, 320px); min-width: 0; height: auto; aspect-ratio: 4 / 5; overflow: hidden; border: 1px solid var(--border); border-radius: 8px; scroll-snap-align: start; }
+  #manifesto .moments-list figure[role="button"] { cursor: pointer; }
+  #manifesto .moments-list figure:focus-visible, #manifesto .moments-mobile-controls button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  #manifesto .moments-list figcaption { left: 16px; bottom: 16px; font-size: .65rem; }
+  #manifesto .moment-portrait-preview { display: none !important; }
+  #manifesto .moment-cover-cta { top: 50% !important; }
+  #manifesto .moment-cover-cta i { width: 52px !important; height: 52px !important; }
+  #manifesto .moment-cover-cta b { font-size: .6rem; }
+}
+
+/* Portal is outside all page stacking/overflow contexts. Fit both dimensions. */
+.moment-modal[role="dialog"] {
+  position: fixed; z-index: 10000; inset: 0; width: 100%; height: 100dvh;
+  display: grid; place-items: center; overflow: auto; overscroll-behavior: contain;
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  background: rgba(5,6,5,.94); backdrop-filter: blur(12px); animation: momentOverlayIn .24s ease both;
+}
+.moment-modal[role="dialog"] .moment-modal-player {
+  position: relative; width: min(390px, 100%, calc((100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) * .5625));
+  max-height: none; aspect-ratio: 9 / 16; overflow: hidden; background: #080908;
+  border: 1px solid rgba(202,219,46,.5); border-radius: 10px; box-shadow: 0 28px 90px rgba(0,0,0,.7);
+  animation: momentPlayerIn .3s var(--ease) both;
+}
+.moment-modal[role="dialog"] video { display: block; width: 100%; height: 100%; object-fit: contain; }
+.moment-modal[role="dialog"] .moment-modal-close { position: absolute; z-index: 4; top: 12px; right: 12px; width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; background: rgba(8,9,8,.85); border: 1px solid var(--border); color: var(--fg); }
+.moment-modal[role="dialog"] .moment-modal-close svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; }
+.moment-modal[role="dialog"] .moment-modal-meta { position: absolute; z-index: 3; inset: auto 0 62px; display: flex; gap: 10px; padding: 18px; background: linear-gradient(transparent,rgba(0,0,0,.65)); text-transform: uppercase; pointer-events: none; }
+.moment-modal[role="dialog"] .moment-modal-meta span { font-size: .6rem; color: var(--accent); }
+.moment-modal[role="dialog"] .moment-modal-meta strong { font-family: var(--f-display); font-size: .8rem; letter-spacing: .1em; }
+.moment-modal[role="dialog"] button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@keyframes momentOverlayIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes momentPlayerIn { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }

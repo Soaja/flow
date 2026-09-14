@@ -6,8 +6,8 @@ export default function Loader({ onComplete }) {
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const mobile = window.matchMedia('(max-width: 768px)').matches;
-    const revealDelay = reducedMotion ? 300 : (mobile ? 680 : 1850);
-    const exitDuration = reducedMotion ? 160 : (mobile ? 320 : 650);
+    const revealDelay = reducedMotion ? 300 : (mobile ? 1750 : 1850);
+    const exitDuration = reducedMotion ? 180 : 650;
     let completeTimer;
     const revealTimer = setTimeout(() => {
       setExiting(true);
