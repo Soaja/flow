@@ -4,20 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FLOW — Sport. Redefined.</title>
-    <meta name="description" content="FLOW is a Belgrade-based sports groupation combining agency, media and athlete management across the Balkans and Adriatic." />
+    <meta name="description" content="FLOW is a sports communications agency based in Belgrade, connecting sport, brands and communities through creative campaigns, content and partnerships." />
+    <!--seo-head-->
 
     <link rel="icon" type="image/svg+xml" href="/flow-symbol.svg" />
 
-    <link rel="preload" href="/fonts/SpaceGrotesk-Variable.ttf" as="font" type="font/ttf" crossorigin />
-    <link rel="preload" href="/fonts/Inter-Variable.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="/fonts/SpaceGrotesk-Variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin />
 
     <!-- Preload LCP image (WebP) -->
-    <link rel="preload" as="image" href="/hero-athlete.webp"
-      imagesrcset="/hero-athlete-sm.webp 768w, /hero-athlete.webp 1920w"
+    <link rel="preload" as="image" href="/hero-background.webp"
+      imagesrcset="/hero-background-sm.webp 768w, /hero-background.webp 1672w"
       imagesizes="100vw"
       fetchpriority="high" />
   </head>
   <body>
+    <div id="intro-root"></div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

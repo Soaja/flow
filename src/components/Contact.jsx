@@ -1,15 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useVisibleMotion } from '../utils/useVisibleMotion';
 
 export default function Contact() {
   const [sent, setSent] = useState(false);
+  const sectionRef = useRef(null);
+  const resetTimer = useRef(null);
+  useVisibleMotion(sectionRef);
+  useEffect(() => () => window.clearTimeout(resetTimer.current), []);
   const submit = event => {
     event.preventDefault();
     setSent(true);
-    window.setTimeout(() => setSent(false), 5000);
+    window.clearTimeout(resetTimer.current);
+    resetTimer.current = window.setTimeout(() => setSent(false), 5000);
   };
 
   return (
-    <section id="contact" className="contact-scene">
+    <section id="contact" ref={sectionRef} className="contact-scene">
       <div className="contact-brush brush-one" aria-hidden="true" />
       <div className="contact-brush brush-two" aria-hidden="true" />
 
@@ -17,7 +23,7 @@ export default function Contact() {
         <div className="contact-map-side">
           <h2>Let&rsquo;s move<br />sport forward.</h2>
           <div className="world-map">
-            <img src="/world-map.svg" alt="World map showing FLOW in Belgrade" />
+            <img src="/world-map.svg" alt="World map showing FLOW in Belgrade" loading="lazy" decoding="async" />
             <div className="belgrade-marker">
               <span className="marker-ring ring-one" /><span className="marker-ring ring-two" />
               <i /><strong>Belgrade</strong><small>44.8° N / 20.5° E</small>

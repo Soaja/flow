@@ -15,8 +15,6 @@ export default function ProjectPage({ project, next }) {
 
   useEffect(() => {
     document.documentElement.classList.add('project-document');
-    const previousTitle = document.title;
-    document.title = `${project.client} — ${project.title} | FLOW`;
     const element = gallery.current;
     const update = () => setEdges({ start: element.scrollLeft <= 2, end: element.scrollLeft + element.clientWidth >= element.scrollWidth - 2 });
     const wheel = (event) => {
@@ -33,7 +31,6 @@ export default function ProjectPage({ project, next }) {
     element.addEventListener('wheel', wheel, { passive: false });
     return () => {
       document.documentElement.classList.remove('project-document');
-      document.title = previousTitle;
       observer.disconnect();
       element.removeEventListener('scroll', update);
       element.removeEventListener('wheel', wheel);

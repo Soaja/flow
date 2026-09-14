@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/optimize-images.mjs && vite build",
+    "build": "node scripts/optimize-fonts.mjs && node scripts/optimize-images.mjs && vite build --manifest && vite build --config vite.ssr.config.js && node scripts/prerender.mjs",
     "lint": "eslint .",
+    "check": "node scripts/check-site.mjs && node scripts/check-navigation.mjs && node scripts/check-navigation.mjs --fresh && node scripts/check-navigation.mjs --work && node scripts/check-navigation.mjs --project",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -23,8 +24,11 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.5.0",
+    "happy-dom": "^20.14.5",
     "preact": "^10.29.1",
+    "preact-render-to-string": "^6.7.0",
     "sharp": "^0.34.5",
-    "vite": "^8.0.10"
+    "vite": "^8.0.10",
+    "wawoff2": "^2.0.1"
   }
 }

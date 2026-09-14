@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { loadGsap } from '../utils/loadGsap';
 import { useGsapIdle } from '../utils/useGsap';
-gsap.registerPlugin(ScrollTrigger);
+import { useVisibleMotion } from '../utils/useVisibleMotion';
 
 const services = [
   'Creative & Campaigns', 'Social-First Content', 'Athlete Communications',
@@ -33,7 +32,20 @@ const moments = [
 
 export default function Manifesto() {
   const sectionRef = useRef(null);
+  useVisibleMotion(sectionRef);
   const [activeMoment, setActiveMoment] = useState(null);
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      sectionRef.current?.querySelectorAll('.moment-cover-video[data-src]').forEach(video => {
+        video.src = video.dataset.src;
+        video.removeAttribute('data-src');
+      });
+      observer.disconnect();
+    }, { rootMargin: '400px' });
+    observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
   useEffect(() => {
     if (!activeMoment) return undefined;
     const previous = document.body.style.overflow;
@@ -52,6 +64,7 @@ export default function Manifesto() {
     if (window.matchMedia('(max-width: 760px)').matches) return;
     const video = event.currentTarget.querySelector('.moment-portrait-preview video');
     if (video) {
+      if (!video.getAttribute('src')) video.src = video.dataset.src;
       video.muted = false;
       video.volume = 1;
       video.play().catch(() => {});
@@ -64,8 +77,10 @@ export default function Manifesto() {
       video.currentTime = 0;
     }
   };
-  useGsapIdle(() => {
+  useGsapIdle(async () => {
     if (window.matchMedia('(max-width: 760px), (prefers-reduced-motion: reduce)').matches) return undefined;
+    const gsap = await loadGsap();
+    if (!sectionRef.current) return undefined;
     const ctx = gsap.context(() => {
       gsap.from('.about-main-copy > *', { y: 34, opacity: 0, stagger: .07, duration: .72, ease: 'power3.out', scrollTrigger: { trigger: sectionRef.current, start: 'top 60%' } });
       gsap.from('.service-chip', { y: 18, opacity: 0, stagger: .045, duration: .5, ease: 'power3.out', scrollTrigger: { trigger: '.service-cloud', start: 'top 82%' } });
@@ -107,7 +122,7 @@ export default function Manifesto() {
           {moments.map(([src, label, videoSrc, number, merged]) => (
             <figure key={src} className={merged ? 'moment-merged' : (!videoSrc ? 'moment-static' : '')} tabIndex={videoSrc ? '0' : undefined} role={videoSrc ? 'button' : undefined} aria-label={videoSrc ? `Play ${label} video` : undefined} onClick={() => openMoment(videoSrc, label, src, number)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openMoment(videoSrc, label, src, number); } }} onMouseEnter={playMoment} onMouseLeave={stopMoment} onFocus={playMoment} onBlur={stopMoment}>
               {videoSrc
-                ? <video className="moment-cover-video" src={videoSrc} aria-label={label} preload="metadata" muted playsInline />
+                ? <video className="moment-cover-video" data-src={videoSrc} aria-label={label} preload="metadata" muted playsInline />
                 : <img src={src} alt={label} loading="lazy" />}
               {videoSrc && <span className="moment-cover-cta" aria-hidden="true">
                 <b>Play video</b>
@@ -115,7 +130,7 @@ export default function Manifesto() {
               </span>}
               {videoSrc && <div className="moment-portrait-preview" aria-hidden="true">
                 {videoSrc
-                  ? <video src={videoSrc} loop playsInline preload="metadata" />
+                  ? <video data-src={videoSrc} data-preview loop playsInline preload="none" />
                   : <img src={src} alt="" loading="lazy" />}
                 {!videoSrc && <span className="moment-preview-play">▶</span>}
                 <small>{number} / {label}</small>

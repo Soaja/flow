@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 /**
  * Defers GSAP setup until the browser has idle time.
- * Eliminates TBT from GSAP initialization on initial page load.
+ * Moves optional animation setup away from initial rendering.
  * Falls back to setTimeout for browsers without requestIdleCallback.
  *
  * @param {() => (() => void) | void} setup  — return a cleanup fn or nothing
@@ -13,7 +13,14 @@ export function useGsapIdle(setup, deps = []) {
     let cleanup;
     let id;
 
-    const run = () => { cleanup = setup(); };
+    let cancelled = false;
+    const run = async () => {
+      try {
+        const result = await setup();
+        if (cancelled) result?.();
+        else cleanup = result;
+      } catch { /* Animation is optional; keep the rendered content available. */ }
+    };
 
     if (typeof requestIdleCallback !== 'undefined') {
       id = requestIdleCallback(run, { timeout: 2000 });
@@ -22,6 +29,7 @@ export function useGsapIdle(setup, deps = []) {
     }
 
     return () => {
+      cancelled = true;
       if (typeof cancelIdleCallback !== 'undefined') cancelIdleCallback(id);
       else clearTimeout(id);
       cleanup?.();

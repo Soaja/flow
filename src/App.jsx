@@ -1,45 +1,71 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
-import Loader  from './components/Loader';
+import { useState, useEffect, useLayoutEffect, Suspense } from 'react';
 import Nav     from './components/Nav';
 import Hero    from './components/Hero';
 import SocialRail from './components/SocialRail';
 import { projects } from './data/projects';
-const ProjectPage = lazy(() => import('./components/ProjectPage'));
-const WorkPage = lazy(() => import('./components/WorkPage'));
-const isWorkPage = new URLSearchParams(window.location.search).get('page') === 'work';
-const projectSlug = new URLSearchParams(window.location.search).get('project');
-const projectIndex = projects.findIndex(project => project.slug === projectSlug);
-const isProject = projectIndex !== -1;
+import { work, project, manifesto, media, contact, preloadRoute } from './utils/routes';
+import { applySeo } from './utils/seo';
+const WorkPage = work.Page;
+const ProjectPage = project.Page;
+const Manifesto = manifesto.Page;
+const MediaHub = media.Page;
+const Contact = contact.Page;
 
-/* Lazy-load everything below the fold — parsed only after first paint */
-const Manifesto  = lazy(() => import('./components/Manifesto'));
-const MediaHub   = lazy(() => import('./components/MediaHub'));
-const Contact    = lazy(() => import('./components/Contact'));
+// This commits with the lazy page, so its anchor is positioned before paint.
+function RoutePosition({ route }) {
+  useLayoutEffect(() => {
+    const target = document.getElementById(route.hash.slice(1));
+    if (target) target.scrollIntoView({ behavior: 'instant', block: 'start' });
+    else window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [route]);
+  return null;
+}
 
-export default function App() {
-  const [loaded, setLoaded] = useState(Boolean(projectSlug) || isWorkPage);
+export default function App({ initialUrl }) {
+  const [route, setRoute] = useState(() => new URL(initialUrl));
+  const isWorkPage = route.searchParams.get('page') === 'work';
+  const projectSlug = route.searchParams.get('project');
+  const projectIndex = projects.findIndex(project => project.slug === projectSlug);
+  const isProject = projectIndex !== -1;
+
+  useEffect(() => { applySeo(route); }, [route]);
 
   useEffect(() => {
-    if (projectSlug || isWorkPage || !loaded || !window.location.hash) return;
-    const id = window.location.hash.slice(1);
-    const scrollToSection = () => {
-      const target = document.getElementById(id);
-      if (!target) return false;
-      target.scrollIntoView({ behavior: 'instant' });
-      return true;
+    let navigation = 0;
+    const commitRoute = async (next, push) => {
+      const request = ++navigation;
+      try {
+        await preloadRoute(next);
+        if (request !== navigation) return;
+        if (push) window.history.pushState(null, '', next);
+        setRoute(next);
+      } catch {
+        if (request === navigation) window.location.assign(next.href);
+      }
     };
-    if (scrollToSection()) return;
-    const observer = new MutationObserver(() => {
-      if (scrollToSection()) observer.disconnect();
-    });
-    observer.observe(document.getElementById('root'), { childList: true, subtree: true });
-    return () => observer.disconnect();
-  }, [loaded]);
+    const navigate = (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const link = event.target.closest('a[href]');
+      if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+      const next = new URL(link.href, window.location.href);
+      if (next.origin !== window.location.origin || next.pathname !== '/') return;
+      if (next.search === window.location.search && next.hash && document.getElementById(next.hash.slice(1))) return;
+      event.preventDefault();
+      commitRoute(next, true);
+    };
+    const restore = () => commitRoute(new URL(window.location.href), false);
+    document.addEventListener('click', navigate);
+    window.addEventListener('popstate', restore);
+    return () => {
+      navigation++;
+      document.removeEventListener('click', navigate);
+      window.removeEventListener('popstate', restore);
+    };
+  }, []);
 
-  // Custom lagged cursor — deferred until browser is idle (no TBT impact)
+  // Animate only while moving; transforms avoid layout work on every frame.
   useEffect(() => {
-    if (!loaded) return;
-    if (!window.matchMedia('(hover: hover)').matches) return;
+    if (!window.matchMedia('(hover: hover) and (prefers-reduced-motion: no-preference)').matches) return;
 
     let raf, cleanup;
 
@@ -48,26 +74,30 @@ export default function App() {
       if (!cursor) return;
 
       let curX = -100, curY = -100, aimX = -100, aimY = -100;
-      const move = e => { aimX = e.clientX; aimY = e.clientY; };
+      const move = e => {
+        aimX = e.clientX; aimY = e.clientY;
+        if (!raf && !document.hidden) raf = requestAnimationFrame(tick);
+      };
       document.addEventListener('mousemove', move, { passive: true });
 
       const tick = () => {
         curX += (aimX - curX) * 0.12;
         curY += (aimY - curY) * 0.12;
-        cursor.style.left = curX + 'px';
-        cursor.style.top  = curY + 'px';
-        raf = requestAnimationFrame(tick);
+        cursor.style.transform = `translate3d(${curX}px,${curY}px,0) translate(-50%,-50%)`;
+        raf = Math.abs(aimX - curX) + Math.abs(aimY - curY) > .1 ? requestAnimationFrame(tick) : null;
       };
-      raf = requestAnimationFrame(tick);
+      const visibility = () => { if (document.hidden) { cancelAnimationFrame(raf); raf = null; } };
+      document.addEventListener('visibilitychange', visibility);
 
-      const grow   = () => cursor.classList.add('expanded');
-      const shrink = () => cursor.classList.remove('expanded');
-      document.querySelectorAll('a,button').forEach(el => {
-        el.addEventListener('mouseenter', grow);
-        el.addEventListener('mouseleave', shrink);
-      });
+      const hover = event => cursor.classList.toggle('expanded', Boolean(event.target.closest('a,button')));
+      document.addEventListener('mouseover', hover);
 
-      cleanup = () => { document.removeEventListener('mousemove', move); cancelAnimationFrame(raf); };
+      cleanup = () => {
+        document.removeEventListener('mousemove', move);
+        document.removeEventListener('mouseover', hover);
+        document.removeEventListener('visibilitychange', visibility);
+        cancelAnimationFrame(raf);
+      };
     };
 
     const id = typeof requestIdleCallback !== 'undefined'
@@ -78,38 +108,36 @@ export default function App() {
       if (typeof cancelIdleCallback !== 'undefined') cancelIdleCallback(id); else clearTimeout(id);
       cleanup?.();
     };
-  }, [loaded]);
+  }, []);
 
   return (
     <>
-      {!loaded && <Loader onComplete={() => setLoaded(true)} />}
-
       {/* Smooth lagged cursor — desktop only */}
       <div id="flow-cursor" style={{
         position: 'fixed', width: 10, height: 10,
         background: 'var(--accent)', borderRadius: '50%',
         pointerEvents: 'none', zIndex: 9998,
-        transform: 'translate(-50%,-50%)',
+        transform: 'translate3d(-100px,-100px,0) translate(-50%,-50%)',
         transition: 'width .25s, height .25s',
         mixBlendMode: 'difference',
-        left: '-100px', top: '-100px',
+        left: 0, top: 0,
       }} />
 
-      <main>
-        {/* Above-fold — always eager */}
-        <Nav projectPage={Boolean(projectSlug) || isWorkPage} />
-        <SocialRail />
-        {!projectSlug && !isWorkPage && <Hero />}
+      <Nav key={route.search} projectPage={Boolean(projectSlug) || isWorkPage} initialHash={route.hash} />
+      <SocialRail />
+      <main id="main-content">
 
         {/* Below-fold — lazy loaded */}
         <Suspense fallback={null}>
-          {isWorkPage ? <WorkPage /> : isProject ? <ProjectPage project={projects[projectIndex]} next={projects[(projectIndex + 1) % projects.length]} /> : projectSlug ? <div style={{ padding: '160px 15%' }}><h1>Project not found.</h1><a href="/#media">Back to our work ?</a></div> : <><Manifesto /><MediaHub /><Contact /></>}
+          {!projectSlug && !isWorkPage && <Hero />}
+          {isWorkPage ? <WorkPage /> : isProject ? <ProjectPage key={projectSlug} project={projects[projectIndex]} next={projects[(projectIndex + 1) % projects.length]} /> : projectSlug ? <div style={{ padding: '160px 15%' }}><h1>Project not found.</h1><a href="/#media">Back to our work ?</a></div> : <><Manifesto /><MediaHub /><Contact /></>}
+          <RoutePosition route={route} />
         </Suspense>
       </main>
 
       <style>{`
         #flow-cursor.expanded { width: 40px !important; height: 40px !important; }
-        @media (hover: none) { #flow-cursor { display: none !important; } }
+        @media (hover: none), (prefers-reduced-motion: reduce) { #flow-cursor { display: none !important; } }
       `}</style>
     </>
   );

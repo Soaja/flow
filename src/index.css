@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'FLOW Display';
-  src: url('/fonts/SpaceGrotesk-Variable.ttf') format('truetype');
+  src: url('/fonts/SpaceGrotesk-Variable.woff2') format('woff2');
   font-style: normal;
   font-weight: 300 700;
   font-display: swap;
@@ -8,7 +8,7 @@
 
 @font-face {
   font-family: 'FLOW Text';
-  src: url('/fonts/Inter-Variable.ttf') format('truetype');
+  src: url('/fonts/Inter-Variable.woff2') format('woff2');
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
@@ -50,6 +50,14 @@ body {
 
 main {
   width: 100%;
+}
+
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
+
+[data-motion-paused], [data-motion-paused] *,
+[data-motion-paused]::before, [data-motion-paused]::after,
+[data-motion-paused] *::before, [data-motion-paused] *::after {
+  animation-play-state: paused !important;
 }
 
 main > section {
@@ -472,7 +480,9 @@ img { display: block; max-width: 100%; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

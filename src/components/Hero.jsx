@@ -1,18 +1,21 @@
 import { useEffect, useRef } from 'react';
+import { useVisibleMotion } from '../utils/useVisibleMotion';
+import { loadGsap } from '../utils/loadGsap';
 
 export default function Hero() {
   const sectionRef = useRef(null);
   const imgRef     = useRef(null);
   const symbolRef  = useRef(null);
+  useVisibleMotion(sectionRef);
 
   /* Lazy-load GSAP only for scroll parallax — never blocks initial paint */
   useEffect(() => {
     if (window.matchMedia('(max-width: 1024px), (prefers-reduced-motion: reduce)').matches) return undefined;
     let ctx;
+    let cancelled = false;
     const init = async () => {
-      const { gsap }          = await import('gsap');
-      const { ScrollTrigger } = await import('gsap/ScrollTrigger');
-      gsap.registerPlugin(ScrollTrigger);
+      const gsap = await loadGsap();
+      if (cancelled) return;
       ctx = gsap.context(() => {
         gsap.to(imgRef.current, {
           yPercent: 22, ease: 'none',
@@ -24,8 +27,8 @@ export default function Hero() {
         });
       }, sectionRef);
     };
-    init();
-    return () => { if (ctx) ctx.revert(); };
+    init().catch(() => {});
+    return () => { cancelled = true; if (ctx) ctx.revert(); };
   }, []);
 
   const words = ['Sport.', 'Redefined.'];
@@ -41,16 +44,16 @@ export default function Hero() {
       <div ref={imgRef} className="hero-img-wrap" style={{ position: 'absolute', inset: 0 }}>
         <picture>
           <source
-            srcSet="/hero-background-sm.webp 768w, /hero-background.webp 2560w"
+            srcSet="/hero-background-sm.webp 768w, /hero-background.webp 1672w"
             sizes="100vw"
             type="image/webp"
           />
           <img
-            src="/hero-background.png"
+            src="/hero-background.webp"
             alt="FLOW sports communications visual with neon pulse lines"
             fetchpriority="high"
             decoding="async"
-            width="2048" height="1152"
+            width="1672" height="941"
             style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'right center', display: 'block' }}
           />
         </picture>

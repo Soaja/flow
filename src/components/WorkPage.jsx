@@ -41,19 +41,21 @@ function ProjectCard({ project, index }) {
   const video = useRef(null);
   const [preview, setPreview] = useState(false);
   const active = useRef(false);
+  useEffect(() => () => { active.current = false; video.current?.pause(); }, []);
   const start = () => {
     if (!window.matchMedia('(hover: hover) and (prefers-reduced-motion: no-preference)').matches) return;
     active.current = true;
-    if (!video.current.src) video.current.src = project.video;
-    video.current.play().then(() => {
+    const element = video.current;
+    if (!element.src) element.src = project.video;
+    element.play().then(() => {
       if (active.current) setPreview(true);
-      else video.current?.pause();
+      else element.pause();
     }).catch(() => {});
   };
   const stop = () => { active.current = false; video.current?.pause(); setPreview(false); };
   return <a className={`work-archive-card work-archive-card--live${preview ? ' is-previewing' : ''}`} href={projectHref(project)} onMouseEnter={start} onMouseLeave={stop} onFocus={start} onBlur={stop} aria-label={`View ${project.client}: ${project.title}`}>
     <div className="work-archive-art">
-      <img src={project.image} alt={`${project.client} campaign`} loading={index === 0 ? 'eager' : 'lazy'} />
+      <img src={project.image} alt={`${project.client} campaign`} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
       <video ref={video} muted loop playsInline preload="none" aria-hidden="true" onError={() => setPreview(false)} />
       <div className="work-archive-art-top"><span>0{index + 1} / Selected work</span><span className="work-archive-status"><i /> Case study</span></div>
       <span className="work-archive-open">Explore project <Arrow /></span>
@@ -66,10 +68,8 @@ function ProjectCard({ project, index }) {
 export default function WorkPage() {
   const [filter, setFilter] = useState('All work');
   useEffect(() => {
-    const title = document.title;
-    document.title = 'Our Work — FLOW';
     document.documentElement.classList.add('work-archive-document');
-    return () => { document.title = title; document.documentElement.classList.remove('work-archive-document'); };
+    return () => { document.documentElement.classList.remove('work-archive-document'); };
   }, []);
   const showLive = filter !== 'Coming soon';
   const showSoon = filter !== 'Released';

@@ -1,5 +1,5 @@
 import sharp from 'sharp';
-import { existsSync, mkdirSync } from 'fs';
+import { existsSync, statSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -34,7 +34,7 @@ const jobs = [
 ];
 
 async function run() {
-  let saved = 0;
+  let totalOutput = 0;
   for (const { src, w, q, suffix = '' } of jobs) {
     const input  = join(PUBLIC, src);
     const outName = src.replace(/\.(jpe?g|png)$/i, `${suffix}.webp`);
@@ -42,16 +42,16 @@ async function run() {
 
     if (!existsSync(input)) { console.warn(`⚠  Missing: ${src}`); continue; }
 
-    const { size: before } = await sharp(input).metadata().then(m => ({ size: m.size })).catch(() => ({ size: 0 }));
+    const before = statSync(input).size;
     await sharp(input).resize({ width: w, withoutEnlargement: true }).webp({ quality: q }).toFile(output);
-    const afterStat = (await import('fs')).statSync(output);
+    const afterStat = statSync(output);
     const after = afterStat.size;
 
     const pct = before ? Math.round((1 - after / before) * 100) : 0;
-    saved += (before - after);
+    totalOutput += after;
     console.log(`✓  ${outName.padEnd(36)} ${(after/1024).toFixed(0).padStart(5)} KB  (−${pct}%)`);
   }
-  console.log(`\nTotal saved: ${(saved/1024/1024).toFixed(1)} MB`);
+  console.log(`\nGenerated WebP variants: ${(totalOutput/1024/1024).toFixed(1)} MB total (not a page-transfer measurement)`);
 }
 
 run().catch(e => { console.error(e); process.exit(1); });

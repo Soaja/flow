@@ -1,21 +1,21 @@
 import { useRef } from 'react';
 import './WorkMore.css';
 import { projects, projectHref } from '../data/projects';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { loadGsap } from '../utils/loadGsap';
 import { useGsapIdle } from '../utils/useGsap';
-gsap.registerPlugin(ScrollTrigger);
 
 const cards = projects;
 
 export default function MediaHub() {
   const sectionRef = useRef(null);
 
-  useGsapIdle(() => {
+  useGsapIdle(async () => {
     if (window.matchMedia('(max-width: 900px), (prefers-reduced-motion: reduce)').matches) return undefined;
+    const gsap = await loadGsap();
+    if (!sectionRef.current) return undefined;
     const ctx = gsap.context(() => {
       // clip-path reveal on each card
-      document.querySelectorAll('.media-img-wrap').forEach((el, i) => {
+      sectionRef.current.querySelectorAll('.media-img-wrap').forEach((el, i) => {
         gsap.fromTo(el,
           { clipPath: 'inset(100% 0% 0% 0%)' },
           {
@@ -34,6 +34,7 @@ export default function MediaHub() {
 
   return (
     <section id="media" ref={sectionRef} className="work-showcase" style={{ padding: 0, borderBottom: '1px solid var(--border)' }}>
+      <h2 className="sr-only">Our work</h2>
       <div className="work-bg-image" aria-hidden="true" />
       <div className="work-bg-grid" aria-hidden="true" />
       <div className="container work-content">
@@ -42,7 +43,7 @@ export default function MediaHub() {
             <a key={c.slug} href={projectHref(c)} aria-label={`View ${c.client}: ${c.title}`} className="media-card-wrap" style={{ position: 'relative', cursor: 'pointer', overflow: 'hidden' }}>
               {/* Image with clip-path reveal wrapper */}
               <div className="media-img-wrap" style={{ aspectRatio: '9/12', overflow: 'hidden', position: 'relative' }}>
-                <img className="card-img" src={c.image} alt={`${c.client} ? ${c.title}`} loading="lazy" decoding="async" />
+                <img className="card-img" src={c.image} alt={`${c.client}: ${c.title}`} loading="lazy" decoding="async" />
 
                 {/* Overlay */}
                 <div style={{
@@ -70,7 +71,7 @@ export default function MediaHub() {
         </div>
         <div className="work-more-row"><a href="/?page=work" className="work-more-link">Load more <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.5" /></svg></a></div>
       </div>
-      <h2 className="work-brutal"><span>Our</span><span>Work</span></h2>
+      <div className="work-brutal" aria-hidden="true"><span>Our</span><span>Work</span></div>
       <style>{`
         .work-showcase { position:relative; overflow:hidden; isolation:isolate; background:#1f211f; }
         .work-content { position:relative; z-index:2; width:100%; max-width:none!important; padding-inline:var(--desktop-gutter) }
