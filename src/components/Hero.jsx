@@ -111,7 +111,7 @@ export default function Hero() {
           fontSize: '1.05rem', lineHeight: 1.65, color: 'rgba(230,231,231,.7)',
           maxWidth: 460, marginBottom: 44, transform: 'translateY(24px)',
         }}>
-          Future communication of sports.
+          The future of sports communication. Sports marketing, media and athlete communications. Belgrade to Europe.
         </p>
 
         <div className="hero-actions hero-act" style={{ display: 'flex', gap: 14, flexWrap: 'wrap', transform: 'translateY(24px)' }}>
