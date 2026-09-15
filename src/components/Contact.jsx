@@ -4,9 +4,24 @@ import { useVisibleMotion } from '../utils/useVisibleMotion';
 export default function Contact() {
   const [sent, setSent] = useState(false);
   const sectionRef = useRef(null);
+  const quoteRef = useRef(null);
   const resetTimer = useRef(null);
   useVisibleMotion(sectionRef);
   useEffect(() => () => window.clearTimeout(resetTimer.current), []);
+  useEffect(() => {
+    const quote = quoteRef.current;
+    if (!quote || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      quote.animate([
+        { opacity: 0, transform: 'translateX(-24px)' },
+        { opacity: 1, transform: 'translateX(0)' },
+      ], { duration: 800, easing: 'cubic-bezier(.22,.61,.36,1)' });
+      observer.disconnect();
+    }, { threshold: 0.2 });
+    observer.observe(quote);
+    return () => observer.disconnect();
+  }, []);
   const submit = event => {
     event.preventDefault();
     setSent(true);
@@ -31,6 +46,11 @@ export default function Contact() {
           </div>
         </div>
 
+        <div className="contact-form-side">
+          <blockquote className="contact-quote" ref={quoteRef}>
+            <span className="contact-quote-mark" aria-hidden="true">&ldquo;</span>
+            <p>Something in sport worth telling people about? That's what we do, <strong>get in touch.</strong></p>
+          </blockquote>
         <form className="contact-card" onSubmit={submit}>
           <div className="contact-card-top"><span>Start a project</span><span>FLOW / 2026</span></div>
           <div className="field-row">
@@ -48,6 +68,7 @@ export default function Contact() {
           <label>Message<textarea name="message" placeholder="Tell us what you’re working on..." required /></label>
           <button type="submit" className={sent ? 'sent' : ''}>{sent ? 'Message sent' : 'Send inquiry'}<span>↗</span></button>
         </form>
+        </div>
       </div>
 
       <footer className="contact-footer">
@@ -57,6 +78,14 @@ export default function Contact() {
       </footer>
 
       <style>{`
+        #contact.contact-scene{height:auto!important;min-height:100dvh}
+        .contact-form-side{position:relative;z-index:2;min-width:0}
+        .contact-quote{display:grid;grid-template-columns:32px minmax(0,1fr);gap:14px;align-items:start;margin:0 0 24px;padding-bottom:22px;border-bottom:1px solid var(--border-h)}
+        .contact-quote-mark{font-family:Georgia,serif;font-size:64px;line-height:.85;color:var(--accent)}
+        .contact-quote p{font-family:var(--f-display);font-size:24px;font-weight:400;line-height:1.45;letter-spacing:0;text-wrap:pretty;color:var(--fg)}
+        .contact-quote strong{font-weight:500;color:var(--accent)}
+        @media(min-width:1025px) and (max-height:820px){.contact-quote{margin-bottom:18px;padding-bottom:16px}.contact-quote p{font-size:20px}}
+        @media(max-width:1024px){.contact-quote{grid-template-columns:26px minmax(0,1fr);gap:12px;margin-bottom:24px;padding-bottom:24px}.contact-quote-mark{font-size:56px}.contact-quote p{font-size:20px;line-height:1.5}}
         .contact-scene{position:relative;display:flex;flex-direction:column;justify-content:center;padding:clamp(24px,5vh,54px) clamp(34px,3.75vw,72px) calc(clamp(74px,8.5vh,92px) + 24px) var(--rail-width)!important;background:#090a09;overflow:hidden;isolation:isolate}
         .contact-scene::before{content:'';position:absolute;z-index:-2;inset:0;background:radial-gradient(circle at 24% 48%,rgba(202,219,46,.07),transparent 34%),linear-gradient(120deg,#090a09,#141614 58%,#090a09)}
         .contact-brush{position:absolute;z-index:-1;width:44vw;height:110px;background:var(--accent);opacity:.1;filter:blur(1px);transform:rotate(-28deg) skewX(-24deg)}.brush-one{right:-12%;top:8%}.brush-two{right:8%;bottom:12%;opacity:.07}

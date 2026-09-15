@@ -55,7 +55,7 @@ function ProjectCard({ project, index }) {
   const stop = () => { active.current = false; video.current?.pause(); setPreview(false); };
   return <a className={`work-archive-card work-archive-card--live${preview ? ' is-previewing' : ''}`} href={projectHref(project)} onMouseEnter={start} onMouseLeave={stop} onFocus={start} onBlur={stop} aria-label={`View ${project.client}: ${project.title}`}>
     <div className="work-archive-art">
-      <img src={project.image} alt={`${project.client} campaign`} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
+      <img src={project.image} alt={project.imageAlt || `${project.client} campaign`} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
       <video ref={video} muted loop playsInline preload="none" aria-hidden="true" onError={() => setPreview(false)} />
       <div className="work-archive-art-top"><span>0{index + 1} / Selected work</span><span className="work-archive-status"><i /> Case study</span></div>
       <span className="work-archive-open">Explore project <Arrow /></span>

@@ -56,7 +56,14 @@ export default function ProjectPage({ project, next }) {
           <p className="project-intro">{project.subtitle}</p>
           </div>
           <div className="project-client-logo">
-            {project.clientLogo ? <img src={project.clientLogo.src} alt={project.clientLogo.alt || `${project.client} logo`} /> : <span className="project-client-name">{project.client}</span>}
+            {project.clientLogo ? <svg className="project-brand-mark" viewBox={project.clientLogo.variant === 'nike-run' ? '35 155 325 185' : '35 85 670 625'} role="img" aria-label={project.clientLogo.alt || `${project.client} logo`}>
+              <defs>
+                <filter id={`brand-white-${project.slug}`} colorInterpolationFilters="sRGB" x="0" y="0" width="100%" height="100%">
+                  <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  -1.08 0 0 0 1.08" />
+                </filter>
+              </defs>
+              <image href={project.clientLogo.src} width={project.clientLogo.width} height={project.clientLogo.height} filter={`url(#brand-white-${project.slug})`} />
+            </svg> : <span className="project-client-name">{project.client}</span>}
           </div>
         </header>
         <dl className="project-meta">

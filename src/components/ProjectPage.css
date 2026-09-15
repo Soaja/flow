@@ -7,6 +7,9 @@ html.project-document { scroll-snap-type: none; }
 .project-hero-copy { min-width: 0; }
 .project-client-logo { display: grid; place-items: center; min-height: 220px; padding: 32px; border-left: 1px solid var(--border-h); }
 .project-client-logo img { width: 100%; max-width: 240px; max-height: 200px; object-fit: contain; }
+/* The SVG converts source background pixels to alpha and preserves the original mark edges. */
+.project-client-logo:has(.project-brand-mark) { padding: 12px; }
+.project-client-logo .project-brand-mark { display: block; width: 100%; height: auto; max-width: 300px; max-height: 280px; overflow: hidden; }
 .project-client-name { font-family: var(--f-display); font-size: clamp(1.5rem, 2.5vw, 2.75rem); font-weight: 700; line-height: 1.1; text-align: center; text-transform: uppercase; letter-spacing: -.045em; }
 .project-symbol { position: absolute; z-index: -1; right: -14%; top: 0; width: 75%; height: 115%; object-fit: contain; opacity: .045; pointer-events: none; }
 .project-eyebrow { display: flex; align-items: center; gap: 14px; font-size: .7rem; font-weight: 700; line-height: 1.5; text-transform: uppercase; letter-spacing: .13em; color: var(--accent); margin-bottom: 24px; }
@@ -41,7 +44,7 @@ html.project-document { scroll-snap-type: none; }
 .project-story h2 { font-size: clamp(2.4rem, 4.4vw, 4.8rem); letter-spacing: -.065em; line-height: .95; text-transform: uppercase; margin-bottom: 24px; }
 .project-heading-dot { color: var(--accent); }
 .project-story-chapter .project-eyebrow { font-size: .6rem; margin-bottom: 24px; }
-.project-story-chapter > p:not(.project-eyebrow) { max-width: 48ch; color: var(--fg-muted); font-size: clamp(.95rem, 1.1vw, 1.08rem); line-height: 1.85; }
+.project-story-chapter > p:not(.project-eyebrow) { max-width: 48ch; color: var(--fg-muted); font-size: clamp(.95rem, 1.1vw, 1.08rem); line-height: 1.85; white-space: pre-line; }
 .project-story-chapter--approach { padding-left: 28px; border-left: 2px solid var(--accent); background: linear-gradient(110deg, rgba(202,219,46,.06), transparent 70%); }
 .project-story-chapter--approach h2 { color: var(--accent); }.project-story-chapter--approach .project-heading-dot { color: var(--fg); }
 .project-story-bottomline { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid var(--border-h); padding: 20px 0; font-size: .6rem; text-transform: uppercase; letter-spacing: .12em; color: var(--fg-muted); }.project-story-bottomline svg { color: var(--accent); transform: rotate(45deg); }

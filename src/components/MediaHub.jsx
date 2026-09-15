@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import './WorkMore.css';
 import { projects, projectHref } from '../data/projects';
 import { loadGsap } from '../utils/loadGsap';
@@ -8,6 +8,22 @@ const cards = projects;
 
 export default function MediaHub() {
   const sectionRef = useRef(null);
+  const quoteRef = useRef(null);
+
+  useEffect(() => {
+    const quote = quoteRef.current;
+    if (!quote || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      quote.animate([
+        { opacity: 0, transform: 'translateX(-24px)' },
+        { opacity: 1, transform: 'translateX(0)' },
+      ], { duration: 800, easing: 'cubic-bezier(.22,.61,.36,1)' });
+      observer.disconnect();
+    }, { threshold: 0.2 });
+    observer.observe(quote);
+    return () => observer.disconnect();
+  }, []);
 
   useGsapIdle(async () => {
     if (window.matchMedia('(max-width: 900px), (prefers-reduced-motion: reduce)').matches) return undefined;
@@ -38,12 +54,16 @@ export default function MediaHub() {
       <div className="work-bg-image" aria-hidden="true" />
       <div className="work-bg-grid" aria-hidden="true" />
       <div className="container work-content">
+        <blockquote className="work-quote" ref={quoteRef}>
+          <span className="work-quote-mark" aria-hidden="true">&ldquo;</span>
+          <p>Sports marketing campaigns, films and content made for the brands shaping sport across the <strong>Balkans and Europe.</strong></p>
+        </blockquote>
         <div className="media-cards-grid">
           {cards.map(c => (
             <a key={c.slug} href={projectHref(c)} aria-label={`View ${c.client}: ${c.title}`} className="media-card-wrap" style={{ position: 'relative', cursor: 'pointer', overflow: 'hidden' }}>
               {/* Image with clip-path reveal wrapper */}
               <div className="media-img-wrap" style={{ aspectRatio: '9/12', overflow: 'hidden', position: 'relative' }}>
-                <img className="card-img" src={c.image} alt={`${c.client}: ${c.title}`} loading="lazy" decoding="async" />
+                <img className="card-img" src={c.image} alt={c.imageAlt || `${c.client}: ${c.title}`} loading="lazy" decoding="async" />
 
                 {/* Overlay */}
                 <div style={{
