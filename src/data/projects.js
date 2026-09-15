@@ -45,10 +45,10 @@ export const projects = [
   },
   {
     slug: 'metcon-fortfight', client: 'Nike', category: 'Training / Activation',
-    clientLogo: null,
+    clientLogo: { src: '/fortfight-logo.jpg', alt: 'Nike Metcon FortFight CrossFit NS logo', variant: 'fortfight', width: 1000, height: 1000, viewBox: '80 110 840 810' },
     title: 'Fortfight.', subtitle: '200 of the fittest athletes in the Balkans. Two days on the turf at Ada Ciganlija.',
     role: 'Concept & Content Production', year: '2023', location: 'Belgrade',
-    image: '/athlete-silhouette.webp', video: '/metcon-fortfight.mp4',
+    image: '/metcon-thumbnail.webp', imageAlt: 'Athlete performing toes-to-bar while a judge watches at Nike Metcon FortFight', video: '/metcon-fortfight.mp4',
     challenge: 'Nike Metcon FortFight had outgrown a local competition. Working alongside production agency Final Cut, who delivered the event on the ground, FLOW handled the concept and content: turn a two-day CrossFit final into the biggest functional fitness event in the Balkans, and use it to launch the Nike Metcon 8 to the exact audience it was built for.',
     approach: "Build the event around the athletes, not the equipment. 200 finalists from 17 countries, across Elite, Master and Scaled categories, on rigs and barbell lanes built to broadcast standard. The Metcon 8 launch sat inside the competition itself \u2014 on the feet of the people it was designed for, not on a separate stage.\n\nContent built in the same three waves as the rest of FLOW's work: anticipation before the weekend, live capture across both days, and a highlight cut that carried the event past the people who stood on the turf.",
     metrics: [
@@ -57,10 +57,10 @@ export const projects = [
       { value: '200K+', label: 'Media reach.' },
     ],
     gallery: [
-      { src: '/athlete-silhouette.webp', alt: 'Athlete preparing to train', caption: 'The mindset' },
-      { src: '/athlete-shoe.webp', alt: 'Training footwear detail', caption: 'Built for work' },
-      { src: '/athlete-woman.webp', alt: 'Athlete during training', caption: 'The effort' },
-      { src: '/athlete-parkour.webp', alt: 'Athlete in motion outdoors', caption: 'No standing still' },
+      { src: '/metcon1.webp', alt: 'Female athlete running across the turf at Nike Metcon FortFight in Belgrade', caption: 'Full speed' },
+      { src: '/metcon2.webp', alt: 'Athletes competing on the pull-up rig with judges watching at Nike Metcon FortFight', caption: 'On the rig' },
+      { src: '/metcon3.webp', alt: 'Athletes racing on rowing machines beside a judge at Nike Metcon FortFight', caption: 'Every rep counts' },
+      { src: '/metcon4.webp', alt: 'Wide view of the Nike Metcon FortFight competition field and spectators at Ada Ciganlija', caption: 'The arena' },
     ],
   },
 ];
