@@ -23,3 +23,4 @@
 .work-more-link:hover { background: var(--accent); color: var(--bg); }
 .work-more-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 @media(max-width:900px) { .work-more-row { justify-content: center; padding-inline: 20px; } }
+@media(max-width:900px) { .work-showcase .work-brutal { justify-content: center; text-align: center; } }
