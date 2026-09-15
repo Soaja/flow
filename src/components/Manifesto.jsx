@@ -4,6 +4,7 @@ import './ManifestoMobile.css';
 import { loadGsap } from '../utils/loadGsap';
 import { useGsapIdle } from '../utils/useGsap';
 import { useVisibleMotion } from '../utils/useVisibleMotion';
+import { projects } from '../data/projects';
 
 const services = [
   'Creative & Campaigns', 'Social-First Content', 'Athlete Communications',
@@ -30,7 +31,10 @@ const moments = [
   ['/athlete-silhouette.webp', 'Motion', '/metcon-fortfight.mp4', '03'],
   ['/flow-logo.svg', 'Flow', null, '04—05', true],
   ['/athlete-2.webp', 'Campaign', '/nike-midnight-run.mp4', '06'],
-];
+].map(([src, label, videoSrc, number, merged]) => {
+  const project = projects.find(project => project.video === videoSrc);
+  return [project?.image || src, label, videoSrc, number, merged, project?.imageAlt || label];
+});
 
 export default function Manifesto() {
   const sectionRef = useRef(null);
@@ -53,18 +57,6 @@ export default function Manifesto() {
     if (!card) return;
     list.scrollBy({ left: direction * (card.getBoundingClientRect().width + 12), behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
   };
-  useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) return;
-      sectionRef.current?.querySelectorAll('.moment-cover-video[data-src]').forEach(video => {
-        video.src = video.dataset.src;
-        video.removeAttribute('data-src');
-      });
-      observer.disconnect();
-    }, { rootMargin: '400px' });
-    observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
   useEffect(() => {
     if (!activeMoment) return undefined;
     const scrollY = window.scrollY;
@@ -133,7 +125,7 @@ export default function Manifesto() {
     <section id="manifesto" ref={sectionRef} className="about-screen">
       <div className="about-photo" aria-hidden="true" />
       <div className="about-grid" aria-hidden="true" />
-      <img className="about-bg-symbol" src="/flow-symbol.svg" alt="" aria-hidden="true" />
+      <img className="about-bg-symbol" src="/flow-symbol.svg" alt="FLOW symbol" aria-hidden="true" />
       <div className="about-scan" aria-hidden="true" />
 
       <div className="about-layout">
@@ -168,18 +160,16 @@ export default function Manifesto() {
           </div>
         </div>
         <div id="moments-track" className="moments-list" ref={momentsRef} onScroll={updateMomentIndex} role="region" aria-label="Moments from the field">
-          {moments.map(([src, label, videoSrc, number, merged]) => (
+          {moments.map(([src, label, videoSrc, number, merged, alt]) => (
             <figure key={src} className={merged ? 'moment-merged' : (!videoSrc ? 'moment-static' : '')} tabIndex={videoSrc ? '0' : undefined} role={videoSrc ? 'button' : undefined} aria-label={videoSrc ? `Play ${label} video` : undefined} onClick={(event) => openMoment(event, videoSrc, label, src, number)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openMoment(event, videoSrc, label, src, number); } }} onMouseEnter={playMoment} onMouseLeave={stopMoment} onFocus={playMoment} onBlur={stopMoment}>
-              {videoSrc
-                ? <video className="moment-cover-video" data-src={videoSrc} aria-label={label} preload="metadata" muted playsInline />
-                : <img src={src} alt={label} loading="lazy" />}
+              <img src={src} alt={alt} loading="lazy" decoding="async" />
               {videoSrc && <span className="moment-cover-cta" aria-hidden="true">
-                <b>Play video</b>
+                <span className="moment-play-label">Play video</span>
                 <i><svg viewBox="0 0 16 16"><path d="M5.25 3.4 12.4 8l-7.15 4.6V3.4Z" /></svg></i>
               </span>}
               {videoSrc && <div className="moment-portrait-preview" aria-hidden="true">
                 {videoSrc
-                  ? <video data-src={videoSrc} data-preview loop playsInline preload="none" />
+                  ? <video data-src={videoSrc} poster={src} data-preview loop playsInline preload="none" />
                   : <img src={src} alt="" loading="lazy" />}
                 {!videoSrc && <span className="moment-preview-play">▶</span>}
                 <small>{number} / {label}</small>
@@ -210,12 +200,12 @@ export default function Manifesto() {
         .moments-list .moment-static>img{filter:none!important;transform:none!important}
         .moments-list figure::after{display:none!important}
         .moment-cover-cta{position:absolute;z-index:3;left:50%;top:50%;display:flex;flex-direction:column;align-items:center;gap:8px;transform:translate(-50%,-50%);pointer-events:none;transition:opacity .2s ease,transform .3s cubic-bezier(.22,.61,.36,1)}
-        .moment-cover-cta b{font-family:var(--f-display);font-size:.54rem;font-style:normal;font-weight:700;line-height:1;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);text-shadow:0 0 16px rgba(202,219,46,.42);white-space:nowrap}
+        .moment-cover-cta .moment-play-label{font-family:var(--f-display);font-size:.54rem;font-style:normal;font-weight:700;line-height:1;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);text-shadow:0 0 16px rgba(202,219,46,.42);white-space:nowrap}
         .moment-cover-cta i{width:38px;height:38px;display:grid;place-items:center;border-radius:50%;background:var(--accent);box-shadow:0 0 0 1px rgba(202,219,46,.38),0 0 24px rgba(202,219,46,.34);transition:transform .28s cubic-bezier(.22,.61,.36,1),box-shadow .28s ease}
         .moment-cover-cta svg{width:15px;height:15px;fill:var(--bg);transform:translateX(1px)}
         .moments-list figure:hover .moment-cover-cta,.moments-list figure:focus-visible .moment-cover-cta{opacity:0;transform:translate(-50%,-42%) scale(.92)}
         .moments-list .moment-cover-cta{z-index:6!important;display:flex!important;opacity:1!important;visibility:visible!important;top:48%!important;gap:10px!important}
-        .moments-list .moment-cover-cta b{padding:7px 11px;border:1px solid rgba(202,219,46,.48);border-radius:999px;background:rgba(8,10,8,.78);color:var(--accent)!important;box-shadow:0 0 20px rgba(202,219,46,.12);backdrop-filter:blur(8px)}
+        .moments-list .moment-cover-cta .moment-play-label{padding:7px 11px;border:1px solid rgba(202,219,46,.48);border-radius:999px;background:rgba(8,10,8,.78);color:var(--accent)!important;box-shadow:0 0 20px rgba(202,219,46,.12);backdrop-filter:blur(8px)}
         .moments-list .moment-cover-cta i{width:46px!important;height:46px!important;box-shadow:0 0 0 1px var(--accent),0 0 32px rgba(202,219,46,.58)!important}
         .moments-list figure>.moment-cover-video{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;filter:grayscale(1) brightness(.62);transition:filter .35s}
         .moments-list figure:hover>.moment-cover-video,.moments-list figure:focus-visible>.moment-cover-video{filter:grayscale(0) brightness(.72)}
@@ -262,7 +252,7 @@ export default function Manifesto() {
         @keyframes posterBeat{0%,100%{transform:scale(1)}8%{transform:scale(1.04)}16%{transform:scale(1)}24%{transform:scale(1.025)}34%{transform:scale(1)}}@keyframes posterRing{0%{transform:scale(.35);opacity:.8}48%,100%{transform:scale(2.2);opacity:0}}@keyframes aboutScan{0%,100%{opacity:0;translate:-22vw 0}20%,70%{opacity:.7}80%{opacity:0;translate:48vw 0}}
         @media(min-width:1025px) and (max-height:820px){.about-layout{padding-left:clamp(56px,7vw,108px)}.about-label{margin-bottom:14px}.about-intro{margin-top:14px}.about-description{margin-top:8px;line-height:1.5}.about-main-copy h3{margin-top:16px;font-size:.9rem}.service-cloud{margin-top:10px;gap:7px}.service-row{gap:7px}.service-chip{min-height:43px;padding:7px 14px;font-size:.75rem}.service-chip i{width:22px;height:22px;flex-basis:22px}.moments-title::before{top:26px}.moments-title::after{top:62px}}
         @media(max-width:1100px){.about-screen{height:auto!important;min-height:100dvh;padding:96px 24px 212px!important}.about-layout{grid-template-columns:1fr .58fr;gap:28px;transform:translateY(-24px)}.about-main-copy h2{font-size:clamp(2.5rem,5.3vw,4rem)}.service-chip{min-height:38px}.moments-dock{left:0}}
-        @media(max-width:760px){.about-screen{padding:104px 20px 0!important;display:block;overflow:hidden}.about-photo{inset:0;opacity:.16}.about-bg-symbol{width:110vw;left:-30%;bottom:40%;opacity:.025}.about-scan{display:none}.about-layout{display:block;padding:0;transform:none}.about-main-copy{width:100%}.about-label{margin-bottom:20px}.about-main-copy h2{font-size:clamp(2.55rem,12vw,4rem);line-height:.92}.about-main-copy h2 strong br{display:none}.about-intro{margin-top:22px;font-size:1rem;line-height:1.25}.about-description{font-size:.92rem;line-height:1.65}.about-main-copy h3{margin-top:28px;font-size:1rem}.service-cloud{gap:8px}.service-row{display:contents}.service-chip{width:100%;min-height:50px;padding:9px 15px;font-size:.85rem;backdrop-filter:none}.service-chip i{width:24px;height:24px;flex-basis:24px}.moments-dock{position:relative;left:auto;right:auto;bottom:auto;width:calc(100% + 40px);height:auto;margin:48px -20px 0;display:block}.moments-title{height:116px;display:block}.moments-title::before{top:27px;left:20px}.moments-title::after{top:65px;left:21px}.moments-list{height:auto;overflow-x:auto;display:flex;scroll-snap-type:x proximity;scrollbar-width:none}.moments-list::-webkit-scrollbar{display:none}.moments-list figure{min-width:72vw;height:235px;scroll-snap-align:start;overflow:hidden}.moments-list .moment-merged{min-width:72vw}.moment-cover-cta{top:50%!important}.moment-cover-cta b{font-size:.58rem}.moment-cover-cta i{width:48px!important;height:48px!important}.moment-modal{position:fixed;z-index:800;inset:0;display:grid;place-items:center;padding:18px;background:rgba(5,6,5,.94);backdrop-filter:blur(12px);animation:modalFade .24s ease both}.moment-modal-player{position:relative;width:min(88vw,390px);max-height:92svh;aspect-ratio:9/16;overflow:hidden;background:#080908;border:1px solid rgba(202,219,46,.5);box-shadow:0 28px 90px rgba(0,0,0,.7);animation:modalIn .38s cubic-bezier(.22,.61,.36,1) both}.moment-modal-player video{width:100%;height:100%;display:block;object-fit:cover}.moment-modal-close{position:absolute;z-index:4;top:12px;right:12px;width:46px;height:46px;display:grid;place-items:center;border-radius:50%;background:rgba(8,9,8,.78);border:1px solid rgba(231,233,234,.25);color:var(--fg);backdrop-filter:blur(8px)}.moment-modal-close svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7}.moment-modal-meta{position:absolute;z-index:3;left:0;right:0;bottom:48px;display:flex;align-items:center;gap:10px;padding:24px 18px 16px;background:linear-gradient(transparent,rgba(0,0,0,.75));text-transform:uppercase}.moment-modal-meta span{font-size:.55rem;color:var(--accent)}.moment-modal-meta strong{font-family:var(--f-display);font-size:.78rem;letter-spacing:.1em}@keyframes modalFade{from{opacity:0}to{opacity:1}}@keyframes modalIn{from{opacity:0;transform:translateY(18px) scale(.96)}to{opacity:1;transform:none}}}
+        @media(max-width:760px){.about-screen{padding:104px 20px 0!important;display:block;overflow:hidden}.about-photo{inset:0;opacity:.16}.about-bg-symbol{width:110vw;left:-30%;bottom:40%;opacity:.025}.about-scan{display:none}.about-layout{display:block;padding:0;transform:none}.about-main-copy{width:100%}.about-label{margin-bottom:20px}.about-main-copy h2{font-size:clamp(2.55rem,12vw,4rem);line-height:.92}.about-main-copy h2 strong br{display:none}.about-intro{margin-top:22px;font-size:1rem;line-height:1.25}.about-description{font-size:.92rem;line-height:1.65}.about-main-copy h3{margin-top:28px;font-size:1rem}.service-cloud{gap:8px}.service-row{display:contents}.service-chip{width:100%;min-height:50px;padding:9px 15px;font-size:.85rem;backdrop-filter:none}.service-chip i{width:24px;height:24px;flex-basis:24px}.moments-dock{position:relative;left:auto;right:auto;bottom:auto;width:calc(100% + 40px);height:auto;margin:48px -20px 0;display:block}.moments-title{height:116px;display:block}.moments-title::before{top:27px;left:20px}.moments-title::after{top:65px;left:21px}.moments-list{height:auto;overflow-x:auto;display:flex;scroll-snap-type:x proximity;scrollbar-width:none}.moments-list::-webkit-scrollbar{display:none}.moments-list figure{min-width:72vw;height:235px;scroll-snap-align:start;overflow:hidden}.moments-list .moment-merged{min-width:72vw}.moment-cover-cta{top:50%!important}.moment-cover-cta .moment-play-label{font-size:.58rem}.moment-cover-cta i{width:48px!important;height:48px!important}.moment-modal{position:fixed;z-index:800;inset:0;display:grid;place-items:center;padding:18px;background:rgba(5,6,5,.94);backdrop-filter:blur(12px);animation:modalFade .24s ease both}.moment-modal-player{position:relative;width:min(88vw,390px);max-height:92svh;aspect-ratio:9/16;overflow:hidden;background:#080908;border:1px solid rgba(202,219,46,.5);box-shadow:0 28px 90px rgba(0,0,0,.7);animation:modalIn .38s cubic-bezier(.22,.61,.36,1) both}.moment-modal-player video{width:100%;height:100%;display:block;object-fit:cover}.moment-modal-close{position:absolute;z-index:4;top:12px;right:12px;width:46px;height:46px;display:grid;place-items:center;border-radius:50%;background:rgba(8,9,8,.78);border:1px solid rgba(231,233,234,.25);color:var(--fg);backdrop-filter:blur(8px)}.moment-modal-close svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7}.moment-modal-meta{position:absolute;z-index:3;left:0;right:0;bottom:48px;display:flex;align-items:center;gap:10px;padding:24px 18px 16px;background:linear-gradient(transparent,rgba(0,0,0,.75));text-transform:uppercase}.moment-modal-meta span{font-size:.55rem;color:var(--accent)}.moment-modal-meta strong{font-family:var(--f-display);font-size:.78rem;letter-spacing:.1em}@keyframes modalFade{from{opacity:0}to{opacity:1}}@keyframes modalIn{from{opacity:0;transform:translateY(18px) scale(.96)}to{opacity:1;transform:none}}}
       `}</style>
     </section>
   );

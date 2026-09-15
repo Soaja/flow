@@ -77,7 +77,7 @@ export default function Hero() {
 
       {/* The supplied FLOW symbol becomes the page's living heartbeat. */}
       <div ref={symbolRef} className="hero-pulse" aria-hidden="true">
-        <img src="/flow-symbol.svg" alt="" width="520" height="520" decoding="async" />
+        <img src="/flow-symbol.svg" alt="FLOW symbol" width="520" height="520" decoding="async" />
       </div>
 
       <div className="container" style={{ position: 'relative' }}>

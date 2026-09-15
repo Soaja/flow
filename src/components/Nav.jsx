@@ -100,7 +100,7 @@ export default function Nav({ projectPage = false, initialHash = '' }) {
       <header className="vertical-header" data-active-index={activeIndex}>
         <span className="section-progress" aria-hidden="true" />
         <a href={projectPage ? '/#hero' : '#hero'} className="vertical-logo" aria-label="FLOW home" onClick={(event) => navigateTo(event, '#hero')}>
-          <img src="/flow-logo.svg" alt="" />
+          <img src="/flow-logo.svg" alt="FLOW" />
         </a>
         <nav className="vertical-nav" aria-label="Primary navigation">
           {links.map((link) => (
@@ -119,7 +119,7 @@ export default function Nav({ projectPage = false, initialHash = '' }) {
       </header>
 
       <div id="mobile-navigation" className={`mobile-menu${menuOpen ? ' open' : ''}`} aria-hidden={!menuOpen}>
-        <img className="mobile-menu-symbol" src="/flow-symbol.svg" alt="" aria-hidden="true" />
+        <img className="mobile-menu-symbol" src="/flow-symbol.svg" alt="FLOW symbol" aria-hidden="true" />
         <p className="mobile-menu-eyebrow">Navigate the flow</p>
         {links.map((link, index) => (
           <a key={link.href} className={active === link.href.slice(1) ? 'active' : ''} href={projectPage ? (link.href === '#media' ? '/?page=work' : `/${link.href}`) : link.href} onClick={(event) => navigateTo(event, link.href)}><small>0{index + 1}</small><span>{link.label}</span></a>

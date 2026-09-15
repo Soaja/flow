@@ -35,7 +35,7 @@
   #manifesto .moment-portrait-preview { display: none !important; }
   #manifesto .moment-cover-cta { top: 50% !important; }
   #manifesto .moment-cover-cta i { width: 52px !important; height: 52px !important; }
-  #manifesto .moment-cover-cta b { font-size: .6rem; }
+  #manifesto .moment-cover-cta .moment-play-label { font-size: .6rem; }
 }
 
 /* Portal is outside all page stacking/overflow contexts. Fit both dimensions. */
