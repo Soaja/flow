@@ -1,7 +1,7 @@
 import { projects, projectHref } from '../data/projects.js';
 
 export const siteDescription = 'FLOW is a sports communications agency based in Belgrade, connecting sport, brands and communities through creative campaigns, content and partnerships.';
-export const siteOrigin = (import.meta.env?.VITE_SITE_URL || 'https://flowsport.co').replace(/\/$/, '');
+export const siteOrigin = (import.meta.env?.VITE_SITE_URL || 'https://www.flowsport.co').replace(/\/$/, '');
 
 export function getSeo(url, origin = siteOrigin) {
   const work = url.searchParams.get('page') === 'work';

@@ -21,7 +21,7 @@ The preview server reproduces the query-based Vercel routing. Other static hosts
 
 ## SEO
 
-The production origin is `https://flowsport.co`. Override with `VITE_SITE_URL` before building; see `.env.example`. `src/utils/seo.js` supplies pre-rendered and client-navigation titles, descriptions, canonicals, Open Graph, Twitter cards and JSON-LD. Tracking parameters and fragments are excluded from canonicals; each project keeps its own URL.
+The production origin is `https://www.flowsport.co`. Override with `VITE_SITE_URL` before building; see `.env.example`. `src/utils/seo.js` supplies pre-rendered and client-navigation titles, descriptions, canonicals, Open Graph, Twitter cards and JSON-LD. Tracking parameters and fragments are excluded from canonicals; each project keeps its own URL.
 
 Build creates `/sitemap.xml` and `/robots.txt`. The sitemap includes five public pages, excludes section anchors and unknown projects, and contains no fabricated update dates. Structured data contains site/organization facts and the visible work collection, without invented reviews, results, social profiles or project dates.
 

@@ -10,7 +10,7 @@ const initialProject = process.argv.includes('--project');
 const fresh = process.argv.includes('--fresh');
 const initialPath = initialWork ? '/?page=work' : initialProject ? '/?project=jordan-the-one' : '/';
 const initialFile = initialWork ? '_pages/work.html' : initialProject ? '_pages/projects/jordan-the-one.html' : 'index.html';
-const window = new Window({ url: `https://flowsport.co${initialPath}`, settings: { disableCSSFileLoading: true, disableJavaScriptFileLoading: true } });
+const window = new Window({ url: `https://www.flowsport.co${initialPath}`, settings: { disableCSSFileLoading: true, disableJavaScriptFileLoading: true } });
 window.document.write(await readFile(`dist/${initialFile}`, 'utf8'));
 if (!fresh) window.sessionStorage.setItem('flow-intro-seen', 'true');
 const originalMain = window.document.querySelector('main');
