@@ -25,3 +25,8 @@ dist-ssr
 
 .vercel
 tmp/
+# Env / secrets
+.env
+.env.*
+!.env.example
+flow-config.php

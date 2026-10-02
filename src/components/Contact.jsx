@@ -3,6 +3,9 @@ import { useVisibleMotion } from '../utils/useVisibleMotion';
 
 export default function Contact() {
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const submitting = useRef(false);
   const sectionRef = useRef(null);
   const quoteRef = useRef(null);
   const resetTimer = useRef(null);
@@ -22,11 +25,30 @@ export default function Contact() {
     observer.observe(quote);
     return () => observer.disconnect();
   }, []);
-  const submit = event => {
+  const submit = async event => {
     event.preventDefault();
-    setSent(true);
+    if (submitting.current) return;
+    submitting.current = true;
+    setLoading(true);
+    setSent(false);
+    setError('');
     window.clearTimeout(resetTimer.current);
-    resetTimer.current = window.setTimeout(() => setSent(false), 5000);
+    const body = Object.fromEntries(new FormData(event.currentTarget));
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body), signal: AbortSignal.timeout(20000),
+      });
+      const result = await response.json();
+      if (!response.ok || result.ok !== true) throw new Error('Submission failed');
+      setSent(true);
+      resetTimer.current = window.setTimeout(() => setSent(false), 5000);
+    } catch {
+      setError('Unable to send your message. Please try again later.');
+    } finally {
+      submitting.current = false;
+      setLoading(false);
+    }
   };
 
   return (
@@ -52,21 +74,23 @@ export default function Contact() {
             <p>Something in sport worth telling people about? That's what we do, <strong>get in touch.</strong></p>
           </blockquote>
         <form className="contact-card" onSubmit={submit}>
+          <input name="company" type="text" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: 'absolute', width: 1, height: 1, padding: 0, border: 0, overflow: 'hidden', clipPath: 'inset(50%)' }} />
           <div className="contact-card-top"><span>Start a project</span><span>FLOW / 2026</span></div>
           <div className="field-row">
-            <label>Name<input name="name" autoComplete="name" placeholder="Your name" required /></label>
-            <label>Email<input name="email" type="email" autoComplete="email" placeholder="your@email.com" required /></label>
+            <label>Name<input name="name" autoComplete="name" placeholder="Your name" maxLength={100} required /></label>
+            <label>Email<input name="email" type="email" autoComplete="email" placeholder="your@email.com" maxLength={200} required /></label>
           </div>
-          <label>Phone number<input name="phone" type="tel" autoComplete="tel" placeholder="+381" /></label>
+          <label>Phone number<input name="phone" type="tel" autoComplete="tel" placeholder="+381" maxLength={50} /></label>
           <label>Inquiry type
-            <select name="inquiry" defaultValue="" required>
+            <select name="inquiryType" defaultValue="" required>
               <option value="" disabled>Select department</option>
               <option>Creative & Campaigns</option><option>Social-First Content</option>
               <option>Athlete Communications</option><option>Brand Partnerships</option><option>Other</option>
             </select>
           </label>
-          <label>Message<textarea name="message" placeholder="Tell us what you’re working on..." required /></label>
-          <button type="submit" className={sent ? 'sent' : ''}>{sent ? 'Message sent' : 'Send inquiry'}<span>↗</span></button>
+          <label>Message<textarea name="message" placeholder="Tell us what you’re working on..." maxLength={5000} required /></label>
+          <button type="submit" disabled={loading} aria-busy={loading} className={sent ? 'sent' : ''}>{loading ? 'Sending…' : sent ? 'Message sent' : 'Send inquiry'}<span>↗</span></button>
+          {error && <p role="alert">{error}</p>}
         </form>
         </div>
       </div>
