@@ -27,14 +27,14 @@ export default async function contact(request, response) {
   if (!/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/u.test(fields.email)) return reply(400, { ok: false, error: 'Enter a valid email address.' });
   if (/[\r\n]/.test(fields.name + fields.inquiryType)) return reply(400, { ok: false, error: 'Name and inquiry type must be single-line.' });
   try {
-    if (!process.env.RESEND_API_KEY || !process.env.CONTACT_TO_EMAIL) throw new Error('Missing contact email configuration.');
+    if (!process.env.RESEND_API_KEY) throw new Error('Missing contact email configuration.');
     const rows = [['Name', fields.name], ['Email', fields.email], ['Phone', fields.phone], ['Inquiry type', fields.inquiryType], ['Message', fields.message]];
     const result = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
       signal: AbortSignal.timeout(15000),
       body: JSON.stringify({
-        from: 'FLOW Website <noreply@flowsport.co>', to: process.env.CONTACT_TO_EMAIL,
+        from: 'FLOW Website <noreply@flowsport.co>', to: 'contact@flowsport.co',
         reply_to: fields.email, subject: `New inquiry: ${fields.inquiryType} — ${fields.name}`,
         html: `<h1>New website inquiry</h1>${rows.map(([label, value]) => `<p><strong>${label}</strong><br>${escapeHtml(value).replace(/\r\n|\r|\n/g, '<br>')}</p>`).join('')}`,
         text: rows.map(([label, value]) => `${label}: ${value}`).join('\n\n'),

@@ -96,7 +96,7 @@ export default function Contact() {
       </div>
 
       <footer className="contact-footer">
-        <div className="footer-address"><img src="/flow-logo.svg" alt="FLOW" /><span>Belgrade, Serbia</span><a href="mailto:hello@flowsport.co">hello@flowsport.co</a></div>
+        <div className="footer-address"><img src="/flow-logo.svg" alt="FLOW" /><span>Belgrade, Serbia</span><a href="mailto:contact@flowsport.co">contact@flowsport.co</a></div>
         <div className="footer-links"><a href="#hero">Home</a><a href="#manifesto">About us</a><a href="#media">Our work</a><a href="#contact">Contact</a></div>
         <div className="footer-legal"><span>© 2026 FLOW</span><a href="#">Privacy</a><a href="#">Terms</a></div>
       </footer>

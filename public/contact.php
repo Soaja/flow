@@ -1,5 +1,5 @@
 <?php
-// flow-config.php (outside DOCUMENT_ROOT) must define RESEND_API_KEY and CONTACT_TO_EMAIL constants.
+// flow-config.php (outside DOCUMENT_ROOT) must define the RESEND_API_KEY constant.
 ini_set('display_errors', '0');
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
@@ -30,7 +30,7 @@ if (!preg_match('/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/uD', $fields['email'])) reply
 if (preg_match('/[\r\n]/', $fields['name'] . $fields['inquiryType'])) reply(400, ['ok' => false, 'error' => 'Name and inquiry type must be single-line.']);
 try {
     require dirname($_SERVER['DOCUMENT_ROOT']) . '/flow-config.php';
-    if (!defined('RESEND_API_KEY') || !defined('CONTACT_TO_EMAIL') || !RESEND_API_KEY || !CONTACT_TO_EMAIL) throw new RuntimeException('Missing contact email configuration.');
+    if (!defined('RESEND_API_KEY') || !RESEND_API_KEY) throw new RuntimeException('Missing contact email configuration.');
     $rows = ['Name' => $fields['name'], 'Email' => $fields['email'], 'Phone' => $fields['phone'], 'Inquiry type' => $fields['inquiryType'], 'Message' => $fields['message']];
     $html = '<h1>New website inquiry</h1>';
     $text = [];
@@ -40,7 +40,7 @@ try {
         $text[] = $label . ': ' . $value;
     }
     $payload = json_encode([
-        'from' => 'FLOW Website <noreply@flowsport.co>', 'to' => CONTACT_TO_EMAIL,
+        'from' => 'FLOW Website <noreply@flowsport.co>', 'to' => 'contact@flowsport.co',
         'reply_to' => $fields['email'], 'subject' => 'New inquiry: ' . $fields['inquiryType'] . ' — ' . $fields['name'],
         'html' => $html, 'text' => implode("\n\n", $text),
     ], JSON_THROW_ON_ERROR);

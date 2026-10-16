@@ -29,7 +29,7 @@ try {
   assert.deepEqual((await invoke({ company: 'bot' })).body, { ok: true });
   assert.equal(calls, 0);
   assert.deepEqual((await invoke(JSON.stringify(valid))).body, { ok: true });
-  assert.equal(payload.to, 'recipient@example.com');
+  assert.equal(payload.to, 'contact@flowsport.co');
   assert.equal(payload.reply_to, valid.email);
   assert.equal(payload.subject, `New inquiry: ${valid.inquiryType} — ${valid.name}`);
   assert.ok(!payload.html.includes('<script>'));
