@@ -30,3 +30,4 @@ tmp/
 .env.*
 !.env.example
 flow-config.php
+flow-dist.zip
