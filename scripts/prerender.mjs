@@ -23,10 +23,10 @@ for (const page of pages) {
   const url = new URL(page.path, origin);
   const seo = getSeo(url, origin);
   const tags = {
-    robots: seo.robots, 'twitter:card': 'summary_large_image', 'twitter:title': seo.title,
+    robots: seo.robots, 'twitter:card': 'summary_large_image', 'twitter:title': seo.ogTitle,
     'twitter:description': seo.description, 'twitter:image': seo.image,
   };
-  const og = { title: seo.title, description: seo.description, url: seo.canonical, image: seo.image, type: 'website', site_name: 'FLOW' };
+  const og = { title: seo.ogTitle, description: seo.description, url: seo.canonical, image: seo.image, type: 'website', site_name: 'FLOW' };
   const head = [
     ...Object.entries(tags).map(([name, content]) => `<meta name="${name}" content="${escape(content)}" />`),
     ...Object.entries(og).filter(([, value]) => value).map(([name, content]) => `<meta property="og:${name}" content="${escape(content)}" />`),

@@ -63,7 +63,7 @@ try {
     await waitFor(() => document.getElementById('hero'), 'direct entry returns home');
   }
   click('.work-more-link');
-  await waitFor(() => document.querySelector('.work-archive') && document.title === 'Our Work — FLOW', 'work route');
+  await waitFor(() => document.querySelector('.work-archive') && document.title === 'Our Work | FLOW', 'work route');
   assert.equal(window.location.search, '?page=work');
   click('.menu-trigger');
   await waitFor(() => document.querySelector('.menu-trigger').getAttribute('aria-expanded') === 'true', 'mobile menu');
@@ -80,20 +80,20 @@ try {
   assert.match(document.querySelector('h1').textContent, /Nike/);
   assert.ok(document.querySelector('.project-play'), 'Next project resets playback');
   click('.project-back');
-  await waitFor(() => document.title === 'Our Work — FLOW', 'back to work');
+  await waitFor(() => document.title === 'Our Work | FLOW', 'back to work');
   click('.mobile-header > a');
   await waitFor(() => document.getElementById('hero'), 'mobile home logo');
   assert.equal(scrolls.at(-1), 'hero');
   assert.equal(document.querySelectorAll('main').length, 1);
   assert.equal(document.querySelectorAll('h1').length, 1);
-  await waitFor(() => document.title === 'FLOW — Sport. Redefined.', 'home metadata');
+  await waitFor(() => document.title === 'FLOW | Sports Marketing Agency', 'home metadata');
   assert.equal(document.querySelectorAll('link[href*="gsap"]').length, 0, 'Reduced-motion visitors do not fetch GSAP');
   const modifiedClick = new window.MouseEvent('click', { bubbles: true, cancelable: true, button: 0, ctrlKey: true });
   document.querySelector('.work-more-link').dispatchEvent(modifiedClick);
   assert.equal(modifiedClick.defaultPrevented, false, 'Modified clicks preserve browser behavior');
   window.history.replaceState(null, '', '/?page=work');
   window.dispatchEvent(new window.PopStateEvent('popstate'));
-  await waitFor(() => document.title === 'Our Work — FLOW', 'history navigation');
+  await waitFor(() => document.title === 'Our Work | FLOW', 'history navigation');
   assert.ok(document.querySelector('.work-archive'));
   console.log(`PASS ${initialPath} (${fresh ? 'first' : 'return'} visit): hydration, navigation, mobile menu, history, intro, SEO, reduced-motion imports`);
 } finally {

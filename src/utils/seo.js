@@ -1,6 +1,6 @@
 import { projects, projectHref } from '../data/projects.js';
 
-export const siteDescription = 'FLOW is a sports communications agency based in Belgrade, connecting sport, brands and communities through creative campaigns, content and partnerships.';
+export const siteDescription = 'FLOW is a sports marketing agency in Belgrade connecting sport, brands and communities through creative campaigns, content and partnerships.';
 export const siteOrigin = (import.meta.env?.VITE_SITE_URL || 'https://www.flowsport.co').replace(/\/$/, '');
 
 export function getSeo(url, origin = siteOrigin) {
@@ -9,8 +9,9 @@ export function getSeo(url, origin = siteOrigin) {
   const project = !work && projects.find(item => item.slug === slug);
   const missing = !work && Boolean(slug) && !project;
   const path = work ? '/?page=work' : project ? projectHref(project) : '/';
-  const title = missing ? 'Project not found | FLOW' : work ? 'Our Work — FLOW'
-    : project ? `${project.client} — ${project.title} | FLOW` : 'FLOW — Sport. Redefined.';
+  const title = missing ? 'Project not found | FLOW' : work ? 'Our Work | FLOW'
+    : project ? `${project.client} | ${project.title} | FLOW` : 'FLOW | Sports Marketing Agency';
+  const ogTitle = path === '/' && !missing ? 'FLOW Sport. Redefined.' : title;
   const description = missing ? 'The requested FLOW project could not be found.' : work
     ? 'Explore FLOW sports campaigns, creative production and brand activations for Jordan Brand, Nike and Metcon.'
     : project ? `${project.client}: ${project.title} ${project.subtitle} ${project.role} by FLOW.` : siteDescription;
@@ -28,7 +29,7 @@ export function getSeo(url, origin = siteOrigin) {
         } } : {}) },
     ],
   } : null;
-  return { title, description, canonical, image, structuredData, robots: missing ? 'noindex,follow' : 'index,follow,max-image-preview:large' };
+  return { title, ogTitle, description, canonical, image, structuredData, robots: missing ? 'noindex,follow' : 'index,follow,max-image-preview:large' };
 }
 
 export function applySeo(url) {
@@ -43,9 +44,9 @@ export function applySeo(url) {
   };
   meta('description', seo.description);
   meta('robots', seo.robots);
-  for (const [name, value] of Object.entries({ title: seo.title, description: seo.description, url: seo.canonical, image: seo.image, type: 'website', site_name: 'FLOW' })) meta(`og:${name}`, value, true);
+  for (const [name, value] of Object.entries({ title: seo.ogTitle, description: seo.description, url: seo.canonical, image: seo.image, type: 'website', site_name: 'FLOW' })) meta(`og:${name}`, value, true);
   meta('twitter:card', 'summary_large_image');
-  meta('twitter:title', seo.title);
+  meta('twitter:title', seo.ogTitle);
   meta('twitter:description', seo.description);
   meta('twitter:image', seo.image);
   let canonical = document.head.querySelector('link[rel="canonical"]');
